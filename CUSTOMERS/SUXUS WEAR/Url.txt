@@ -1,0 +1,1 @@
+http://sms.textware.lk:5000/sms/send_sms.php?username=suxus_wear_m225&password=PMZDhficg7VL&src=MyMask&dst=MyNumber&msg=MyMessage&dr=1
