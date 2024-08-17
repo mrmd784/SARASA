@@ -1,0 +1,23 @@
+	If Exists(Select * from inserted Where TransID=1)
+	Begin
+		Select @Customer=CustomerId,@Points=Convert(Decimal(18,2),Points),@Amount=Convert(Decimal(18,2),Amount),@ReceiptNo=Receipt From Inserted Where TransID=1
+		select @Balance=Convert(Decimal(18,2),CPoints) from LoyaltyCustomer where LoyaltyCustomerID=@Customer
+		Select @Phone=Mobile from LoyaltyCustomer Where LoyaltyCustomerID=@Customer
+		If len(Rtrim(@Phone))=10
+		Begin
+			Set @message=	'Dear Customer, You Have Earned ' + @Points + ' Point(s).Your Loyalty Points Balance - '+@Balance+'. Thank You For Your Patronage.' 
+			Insert Into LoyaltyMessage (PhoneNo,MessageText,SendStatus,BatchCode,Mask) Values (@Phone,@message,0,'','')
+		End
+	End
+	
+	If Exists(Select * from inserted Where TransID=2)
+	Begin
+		Select @Customer=CustomerId,@Points=Convert(Decimal(18,2),Points),@Amount=Convert(Decimal(18,2),Amount),@ReceiptNo=Receipt From Inserted Where TransID=2
+		select @Balance=Convert(Decimal(18,2),CPoints) from LoyaltyCustomer where LoyaltyCustomerID=@Customer
+		Select @Phone=Mobile from LoyaltyCustomer Where LoyaltyCustomerID=@Customer
+		If len(Rtrim(@Phone))=10
+		Begin
+			Set @message=	'Dear Customer, You Have Redeemed ' + @Points + ' Point(s).Your Loyalty Points Balance - '+@Balance+'.' 
+			Insert Into LoyaltyMessage (PhoneNo,MessageText,SendStatus,BatchCode,Mask) Values (@Phone,@message,0,'','')
+		End
+	End

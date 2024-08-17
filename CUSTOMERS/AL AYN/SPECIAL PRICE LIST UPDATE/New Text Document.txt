@@ -1,0 +1,49 @@
+select * from tb_SpecialPrices where Item_Code='010010105' and SpecialPriceListID='5'
+
+select * from tb_SpecialPrices where SpecialPriceListID='5'
+
+select * from tb_SpecialPriceList 
+
+select * from StaffDis0429 where ItemCode='010010035'
+
+select * from StaffDis0429 where len(itemcode)<'4'
+delete from staffdis where len(itemcode)<'4'
+
+USE [Easyway]
+GO
+
+INSERT INTO [dbo].[tb_SpecialPrices]
+([Item_Code]
+,[CustCode]
+,[PackSize]
+,[Ret_Price]
+,[Wh_Price]
+,[ItemDescrip]
+,[LocaCode]
+,[UserId]
+,[CDate]
+,[SpecialPriceListID]
+,[ModifiedUser]
+,[ModifiedDate]
+,[Persentage])
+
+select itemcode,'','0',price,'0.00',tb_item.Descrip,'','Easyway',getdate(),'5','Easyway',getdate(),'0.00' from StaffDis0429
+join tb_item on StaffDis0429.ItemCode=tb_item.Item_Code
+where Item_Code not in (select distinct Item_Code from tb_SpecialPrices where SpecialPriceListID='5')
+
+begin tran
+Update sp set sp.Ret_Price=st.Price from StaffDis0429 as st
+join tb_SpecialPrices as sp on st.ItemCode=sp.Item_Code
+where sp.SpecialPriceListID='5'
+
+commit
+rollback
+
+select distinct item_code,price as old_price,StaffDis0429.PRICE as new_price from tb_SpecialPrices 
+join StaffDis0429 on tb_SpecialPrices.item_code=StaffDis0429.itemcode
+where SpecialPriceListID='5'
+
+
+select * from #tb1 where old_price<>new_price
+
+
