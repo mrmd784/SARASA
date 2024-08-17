@@ -1,0 +1,1 @@
+http://sms.textware.lk:5000/sms/send_sms.php?username=cool_collection_m227&password=HlI46nJM1DmL&src=MyMask&dst=MyPhoneNo&msg=MyMessage&dr=1

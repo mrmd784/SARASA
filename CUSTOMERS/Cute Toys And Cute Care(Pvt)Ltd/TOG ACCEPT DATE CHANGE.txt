@@ -1,0 +1,15 @@
+select * from tb_TogDet_acc where serialno='A08000001'
+select * from tb_TogSumm_Acc where serialno='A08000001'
+select * from tb_stock where serialno='A08000001'
+
+update tb_TogDet_acc set TDate='2023-01-25 00:00:00.000' where serialno='A08000001'
+update tb_TogSumm_Acc set TDate='2023-01-25 00:00:00.000' where serialno='A08000001'
+update tb_Stock set PDate='2023-01-25 00:00:00.000' where serialno='A08000001'
+
+select * from tb_TogDet_acc where serialno='A08000002'
+select * from tb_TogSumm_Acc where serialno='A08000002'
+select * from tb_stock where serialno='A08000002'
+
+update tb_TogDet_acc set TDate='2023-02-03 00:00:00.000' where serialno='A08000002'
+update tb_TogSumm_Acc set TDate='2023-02-03 00:00:00.000' where serialno='A08000002'
+update tb_Stock set PDate='2023-02-03 00:00:00.000' where serialno='A08000002'
