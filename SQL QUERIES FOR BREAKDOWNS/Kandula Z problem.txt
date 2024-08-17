@@ -1,0 +1,14 @@
+Kandula z problem Receipt no not initialize [transactiondetbackup reference column not allow null]
+
+check the data duplication and delete following according to dates
+
+select *from TransactionDet 
+where RecDate in('2023-03-15'
+,'2023-03-16'
+,'2023-03-18') and UnitNo=2
+
+
+select * from PaymentDet 
+where CAST(sdate as date) in('2023-03-15'
+,'2023-03-16'
+,'2023-03-18') and UnitNo=2

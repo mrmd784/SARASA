@@ -1,0 +1,31 @@
+USE [EasyWayNew]
+GO
+
+/****** Object:  Table [dbo].[tb_DwnStock]    Script Date: 10-26-2023 11:26:36 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[tb_DwnStock](
+	[ItemCode] [varchar](25) NULL,
+	[Loca] [char](5) NULL,
+	[Qty] [decimal](18, 4) NULL,
+	[Balance] [decimal](12, 4) NULL,
+	[Cost] [money] NOT NULL CONSTRAINT [DF__tb_DwnStoc__Cost__3DFE09A7]  DEFAULT ((0)),
+	[Price] [money] NOT NULL CONSTRAINT [DF__tb_DwnSto__Price__3EF22DE0]  DEFAULT ((0)),
+	[CSCode] [varchar](50) NULL,
+	[Currqty] [float] NULL,
+	[Nett] [money] NOT NULL CONSTRAINT [DF_tb_DwnStock_Nett]  DEFAULT ((0))
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING ON
+GO
+
+

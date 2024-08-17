@@ -1,0 +1,11 @@
+INSERT INTO [Easyway].[dbo].[tb_PriceChange]
+([ItemCode],[ItemDescrip],[LocaCode],[SuppCode],[Qty],[PackSize],[CostPrice],[ERetPrice],[PRetPrice]
+,[EWholePrice],[PWholePrice],[NewCostPrice],[NewERetPrice],[NewPRetPrice],[NewEWholePrice],[NewPWholePrice],[CDate]
+,[UserName],[CType],[CDatetime],[Status],[AvgCost],[NewAvgCost])
+SELECT 
+it.Item_Code,it.Descrip,itd.Loca_Code,it.Supp_Code,vs.Stock,it.Pack_Size,itd.Cost_Price,itd.ERet_Price,itd.PRet_Price
+,itd.EWhole_Price,itd.PWhole_Price,itd.Cost_Price,itd.ERet_Price,itd.PRet_Price,itd.EWhole_Price,itd.PWhole_Price,GETDATE()
+,'EASYWAY','ITU',GETDATE(),1,itd.Cost_Price,itd.Cost_Price
+  FROM [Easyway].[dbo].[tb_item] it
+inner join tb_ItemDet itd on it.Item_Code=itd.Item_Code
+inner join Vw_Stock vs on it.Item_Code=vs.ItemCode

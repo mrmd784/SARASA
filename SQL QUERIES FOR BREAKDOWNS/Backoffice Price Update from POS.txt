@@ -1,0 +1,3 @@
+update [Easyway].[dbo].[tb_ItemDet] set ERet_Price=a.price from [Spos_Data].[dbo].[tbItem] 
+as a join easyway.dbo.tb_ItemDet 
+as b on a.itemcode=b.item_code

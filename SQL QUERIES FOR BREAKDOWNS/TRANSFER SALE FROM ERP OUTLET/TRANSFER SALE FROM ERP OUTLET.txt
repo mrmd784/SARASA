@@ -1,0 +1,43 @@
+Insert Into OpenRowset('Sqloledb','124.43.21.144';'sa';'tserp132',ERP.dbo.TransactionDet)
+	  ([ProductID],[ProductCode],[RefCode],[BarCodeFull],[Descrip],[BatchNo],[SerialNo],[ExpiryDate],[Cost],[AvgCost],[Price],[Qty],[BalanceQty],[Amount]
+,[UnitOfMeasureID],[UnitOfMeasureName],[ConvertFactor],[IDI1],[IDis1],[IDiscount1],[IDI1CashierID],[IDI2],[IDis2],[IDiscount2],[IDI2CashierID],[IDI3],[IDis3],[IDiscount3]
+,[IDI3CashierID],[IDI4],[IDis4],[IDiscount4],[IDI4CashierID],[IDI5],[IDis5],[IDiscount5],[IDI5CashierID],[Rate],[IsSDis],[SDNo],[SDID],[SDIs],[SDiscount],[DDisCashierID],[Nett]
+,[LocationID],[DocumentID],[BillTypeID],[SaleTypeID],[Receipt],[SalesmanID],[Salesman],[CustomerID],[Customer],[CashierID],[Cashier],[StartTime],[EndTime],[RecDate]
+,[BaseUnitID],[UnitNo],[RowNo],[IsRecall],[RecallNO],[RecallAdv],[TaxAmount],[IsTax],[TaxPercentage],[IsStock],[UpdateBy],[Status],[ZNo],[GroupOfCompanyID],[DataTransfer]
+,[CustomerType],[TransStatus],[ZDate],[IsPromotionApplied],[PromotionID],[IsPromotion],[LocationIDBilling],[TableID],[OrderTerminalID],[TicketID],[OrderNo],[IsPrinted]
+,[ItemComment],[Packs],[IsCancelKOT],[StewardID],[StewardName],[ServiceCharge],[ServiceChargeAmount],[ShiftNo],[IsDayEnd],[UpdateUnitNo],[Nos]
+,[ProductColorSizeID],[SaleStatus],[AdvaneReceiptNo],[RecallAvdInvoice],[CurrencyID],[CurrencyRate]) 
+
+SELECT  ProductID, ProductCode, RefCode, BarCodeFull, Descrip, BatchNo, SerialNo, ExpiryDate, Cost, AvgCost, Price, Qty, BalanceQty, Amount, 
+                      UnitOfMeasureID, UnitOfMeasureName, ConvertFactor, IDI1, IDis1, IDiscount1, IDI1CashierID, IDI2, IDis2, IDiscount2, IDI2CashierID, IDI3, IDis3, IDiscount3, 
+                      IDI3CashierID, IDI4, IDis4, IDiscount4, IDI4CashierID, IDI5, IDis5, IDiscount5, IDI5CashierID, Rate, IsSDis, SDNo, SDID, SDIs, SDiscount, DDisCashierID, Nett, 
+                      LocationID, DocumentID, BillTypeID, SaleTypeID, Receipt, SalesmanID, Salesman, CustomerID, Customer, CashierID, Cashier, StartTime, EndTime, RecDate, 
+                      BaseUnitID, UnitNo, RowNo, IsRecall, RecallNO, RecallAdv, TaxAmount, IsTax, TaxPercentage, IsStock, UpdateBy, Status, ZNo, GroupOfCompanyID, DataTransfer, 
+                      CustomerType, TransStatus, ZDate, IsPromotionApplied, PromotionID, IsPromotion, LocationIDBilling, TableID, OrderTerminalID, TicketID, OrderNo, IsPrinted, 
+                      ItemComment, Packs, IsCancelKOT, StewardID, StewardName, ServiceCharge, ServiceChargeAmount, ShiftNo, IsDayEnd, UpdateUnitNo,Nos,ProductColorSizeID
+					  ,SaleStatus,AdvaneReceiptNo,RecallAvdInvoice,CurrencyID,CurrencyRate
+
+FROM         TransactionDet
+ where Locationid='9' and cast(zdate as date)='2024-08-14' and unitno='3'
+ and Receipt between '00000001' and '00000029'
+Order By Receipt
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Insert Into OpenRowset('Sqloledb','124.43.21.144';'sa';'tserp132',ERP.dbo.PaymentDet)
+	  ([RowNo],[PayTypeID],[Amount],[Balance],[SDate],[Receipt],[LocationID],[CashierID],[UnitNo],[BillTypeID],[SaleTypeID],[RefNo],[BankId],[ChequeDate],
+[IsRecallAdv],[RecallNo],[Descrip],[EnCodeName],[UpdatedBy],[Status],[ZNo],[CustomerId],[CustomerType],[CustomerCode],[GroupOfCompanyID],[Datatransfer],[ZDate],
+[TerminalID],[LoyaltyType],[IsUploadToGL],[LocationIDBilling],[TableID],[TicketID],[OrderNo],[ShiftNo],[IsDayEnd],[UpdateUnitNo],[Nos],[SaleStatus],[AdvaneReceiptNo],[RecallAvdInvoice],[CurrencyID],[CurrencyRate]) 
+
+SELECT    RowNo, PayTypeID, Amount, Balance, SDate, Receipt, LocationID, CashierID, UnitNo, BillTypeID, SaleTypeID, RefNo, BankId, ChequeDate, 
+                      IsRecallAdv, RecallNo, Descrip, EnCodeName, UpdatedBy, Status, ZNo, CustomerId, CustomerType, CustomerCode, GroupOfCompanyID, Datatransfer, ZDate, 
+                      TerminalID, LoyaltyType, IsUploadToGL, LocationIDBilling, TableID, TicketID, OrderNo, ShiftNo, IsDayEnd, UpdateUnitNo,Nos,SaleStatus,AdvaneReceiptNo,RecallAvdInvoice,CurrencyID,CurrencyRate
+FROM         PaymentDet 
+where Locationid='9' and cast(zdate as date)='2024-08-14' and unitno='3'
+ and Receipt between '00000001' and '00000029'
+Order By Receipt
+
+
+
+
+

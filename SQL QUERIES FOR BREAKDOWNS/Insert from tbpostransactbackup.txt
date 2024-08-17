@@ -1,0 +1,29 @@
+Insert Into  Openrowset('Sqloledb','Server';'sa';'tstc123',EasyWay.Dbo.tbPosTransact) 
+([ItemCode],[RefCode],[Descrip],[Cost],[Price],[Qty],[Amount],[IDI1],[IDis1],[IDiscount1],[IDI2],[IDis2],[IDiscount2],[IDI3],[IDis3]
+,[IDiscount3],[IDI4],[IDis4],[IDiscount4],[IDI5],[IDis5],[IDiscount5],[Rate],[SDStat],[SDNo],[SDID],[SDIs],[SDiscount],[Tax],[Nett]
+,[Loca],[IId],[Receipt],[Salesman],[Cust],[Cashier],[StartTime],[EndTime],[RecDate],[BillType],[Unit],[UnitNo],[RowNo],[CDate],[Status]
+,[PackSize],[ExpDate],[ItemType],[ConFact],[PackScale],[UpdateBy],[RecallStat],[SaleType],[RecallNo],[Pcs],[Invoice],[PriceLevel]
+,[KotType],[descripplus],[TaxAmount],[TaxStat],[TaxPcnt],[InvSerial],[CustName],[OrderBy],[OrderNo],[Zno],[Insertdate])
+
+SELECT 
+[ItemCode],[RefCode],[Descrip],[Cost],[Price],[Qty],[Amount],[IDI1],[IDis1],[IDiscount1],[IDI2],[IDis2],[IDiscount2],[IDI3],[IDis3]
+,[IDiscount3],[IDI4],[IDis4],[IDiscount4],[IDI5],[IDis5],[IDiscount5],[Rate],[SDStat],[SDNo],[SDID],[SDIs],[SDiscount],[Tax],[Nett]
+,[Loca],[IId],[Receipt],[Salesman],[Cust],[Cashier],[StartTime],[EndTime],[RecDate],[BillType],[Unit],[UnitNo],[RowNo],[CDate],[Status]
+,[PackSize],[ExpDate],[ItemType],[ConFact],[PackScale],[UpdateBy],[RecallStat],[SaleType],[RecallNo],[Pcs],[Invoice],1
+,[KotType],[descripplus],[TaxAmount],[TaxStat],[TaxPcnt],[InvSerial],[CustName],[OrderBy],[OrderNo],[ZNo],'2023-06-24 21:33:47.010'
+FROM [SPOS_DATA].[dbo].[tbPostransactbackup] where recdate between '2023-06-24' and '2023-06-25'
+
+
+
+
+Insert Into  Openrowset('Sqloledb','Server';'sa';'tstc123',EasyWay.Dbo.tbPosPayment) 
+([Receipt],[Loca],[UnitNo],[Sdate],[Id],[TypeId],[Amount],[Balance],[Cashier],[PaidAt],[BillType],[SerialNo],[PStatus],[Cust]
+,[CustType],[BankId],[ChequeDate],[UpdateBy],[AdvanceNo],[Invoice],[InvSerial],[CustName],[Zno],[Insertdate],[CurCode],[CurRate]
+,[CurRateRel],[CurRateLkr],[CurIdDef],[RealAmount])
+SELECT 
+[Receipt],[Loca],[UnitNo],[Sdate],[Id],[TypeId],[Amount],[Balance],[Cashier],[PaidAt],[BillType],[SerialNo],[PStatus],[Cust]
+,[CustType],[BankId],[ChequeDate],[UpdateBy],[AdvanceNo],[Invoice],[InvSerial],[CustName],[ZNo],'2023-06-24 21:33:47.010',[CurCode],[CurRate]
+,[CurRateRel],[CurRateLkr],[CurIdDef],[RealAmount]
+ FROM [SPOS_DATA].[dbo].[tbPospaymentbackup] where sdate between '2023-06-24' and '2023-06-25'
+
+

@@ -1,0 +1,61 @@
+USE [EasyWay]
+GO
+/****** Object:  StoredProcedure [dbo].[SP_DataTransfer_SalesH]    Script Date: 2024-03-19 10:08:44 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[SP_DataTransfer_SalesH] 
+@Receipt varchar(10),
+@Loca char(5),
+@UnitNo char(3),
+@SDate datetime,
+@Id smallint,
+@TypeId smallint,
+@Amount float,
+@Balance float,
+@Cashier char(10),
+@PaidAt datetime,
+@BillType char(1),
+@SerialNo varchar(20),
+@PStatus char(1),
+@Cust varchar(15),
+@CustType char(1),
+@BankId int,
+@ChequeDate char(10),
+@UpdateBy varchar(15),
+@AdvanceNo char(10),
+@Invoice nchar(10),
+@Upload char(1),
+@ZNo decimal(18,0),
+@InvSerial varchar(12),
+@CustName varchar(100),
+@CurCode char(3),
+@CurRate decimal(18,4),
+@CurRateRel decimal(18,6),
+@CurRateLkr decimal(18,6),
+@CurIdDef int,
+@RealAmount decimal(18,4),
+@FLoca char(10),
+@TableNo char(10),
+@OrderNo varchar(15),
+@Shift int,
+@ReceiptEncrypt varchar(100)='',
+@DocNo varchar(10)  OUTPUT
+AS
+BEGIN
+IF NOT EXISTS (SELECT * FROM tbPospayment WHERE Receipt = @Receipt AND Loca = @Loca AND UnitNo = @UnitNo AND ZNo = @ZNo AND Id = @Id)
+BEGIN
+	INSERT INTO [tbPospayment]
+	([Receipt],[Loca],[UnitNo],[Sdate],[Id],[TypeId],[Amount],[Balance],[Cashier],[PaidAt],[BillType],[SerialNo],
+	[PStatus],[Cust],[CustType],[BankId],[ChequeDate],[UpdateBy],[AdvanceNo],[Invoice],[Upload],[ZNo],[Insertdate],
+	[InvSerial],[CustName],[CurCode],[CurRate],[CurRateRel],[CurRateLkr],[CurIdDef],[RealAmount],[FLoca],[TableNo],[OrderNo],[Shift],[InvoiceNo])
+	VALUES(@Receipt,@Loca,@UnitNo,@SDate,@Id,@TypeId,@Amount,@Balance,@Cashier,@PaidAt,@BillType,@SerialNo,
+	@PStatus,@Cust,@CustType,@BankId,@ChequeDate,@UpdateBy,@AdvanceNo,@Invoice,'O',@ZNo,GetDate(),
+	@InvSerial,@CustName,@CurCode,@CurRate,@CurRateRel,@CurRateLkr,@CurIdDef,@RealAmount,@FLoca,@TableNo,@OrderNo,@Shift,@ReceiptEncrypt)
+	
+
+END
+	set @DocNo = @Receipt
+--RETURN @DocNo
+END

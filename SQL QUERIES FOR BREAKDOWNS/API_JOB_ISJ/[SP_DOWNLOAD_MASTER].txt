@@ -1,0 +1,656 @@
+USE [EASYWAY]
+GO
+/****** Object:  StoredProcedure [dbo].[SP_DOWNLOAD_MASTER]    Script Date: 11/29/2019 14:14:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[SP_DOWNLOAD_MASTER]
+	@LOCATIONID	Varchar(5)='02'
+AS
+	SET NOCOUNT ON
+	DECLARE @lastid int
+ 
+	Set @lastid=0
+             --set @L3_Code=''
+             --set @L4_Code=''
+
+Declare @Cust_Code varchar(10)
+Declare @Cust_Name varchar(50)
+Declare @Contact_Name varchar(50)
+Declare @Contact_No varchar(15)
+Declare @Address1 varchar(50)
+Declare @Address2 varchar(50)
+Declare @Address3 varchar(50)
+Declare @Country varchar(30)
+Declare @Region varchar(30)
+Declare @Phone1 varchar(15)
+Declare @Phone2 varchar(15)
+Declare @Phone3 varchar(15)
+Declare @Fax varchar(15)
+Declare @Email varchar(50)
+Declare @Web_Site varchar(50)
+Declare @CreditLimit money
+Declare @CreditPeriod float
+Declare @Route varchar(60)
+Declare @CDate smalldatetime
+Declare @State tinyint
+Declare @User_Id varchar(15)
+Declare @Balance float
+Declare @AccBalance float
+Declare @PriceStat int
+Declare @OverDraft float
+Declare @Idx int
+
+
+--2 
+Declare @Supp_Code varchar(10)
+Declare @Supp_Name varchar(50)
+Declare @Status bit
+
+--3 item
+
+Declare @Item_Code varchar(20)
+Declare @Ref_Code varchar(20)
+Declare @Inv_Descrip char(35)
+Declare @Descrip varchar(65)
+Declare @Cat_Code varchar(10)
+Declare @SubCat_Code varchar(10)
+Declare @L1_Code varchar(10)
+Declare @L2_Code varchar(10)
+Declare @L3_Code varchar(10)
+Declare @L4_Code varchar(10)
+Declare @L5_Code varchar(10)
+Declare @L6_Code varchar(10)
+Declare @L7_Code varchar(10)
+Declare @Pack_Size float
+Declare @W_Margine nvarchar(20)
+Declare @R_Margine nvarchar(20)
+Declare @PUnit varchar(5)
+Declare @EUnit varchar(5)
+Declare @Tax1 varchar(10)
+Declare @Tax2 varchar(10)
+Declare @Tax3 varchar(10)
+Declare @Countable tinyint
+Declare @Use_Exp tinyint
+Declare @ComRate float
+Declare @ItemType tinyint
+Declare @ConvertFact int
+Declare @ConvertFactUnit char(5)
+Declare @isCombined bit
+Declare @isTaxApply bit
+Declare @isNbtApply bit
+Declare @Barcode varchar(20)
+
+
+-- 4 item det
+
+Declare @Lock_S bit
+Declare @Lock_P bit
+Declare @NoDiscount bit
+Declare @EditDate datetime
+Declare @SPQ decimal
+Declare @TPQ decimal
+Declare @FPQ decimal
+Declare @Re_Qty float
+Declare @Rol float
+Declare @Qty float
+Declare @PRet_Price money
+Declare @PWhole_Price money
+Declare @PSp_Price money
+Declare @ERet_Price money
+Declare @EWhole_Price money
+Declare @ESp_Price money
+Declare @Cost_Price money
+Declare @SPR money
+Declare @TPR money
+Declare @FPR money
+Declare @Loca_Code varchar(5)
+Declare @Cost_Code varchar(10)
+Declare @BinNo varchar(10)
+
+-- 5 LINK1
+
+Declare @L1_Rate decimal
+Declare @L1_Name varchar(50)
+
+--  6 cat
+
+Declare @Cat_Rate decimal
+Declare @Cat_Name varchar(50)
+
+-- 7 SUB CAT
+Declare @SubCat_Name varchar(50)
+
+-- Colour Size 
+
+Declare	@ItemCode varchar(30)
+Declare	@CSCode varchar(30) 
+Declare	@CSName varchar(100) 
+Declare	@Rate decimal(18,2) 
+Declare	@Price decimal(18,2)
+Declare	@Discount decimal(18,2)
+Declare	@CCode varchar(30) 
+Declare	@SCode varchar(30) 
+Declare	@LocaCode varchar(5) 
+
+--8 Salesman
+Declare @Rep_Code varchar(10)
+Declare @Rep_Name varchar(50)
+Declare @CommRate float
+Declare @TargetAmt money
+Declare @Rep bit
+
+
+
+-- CUSTOMER DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='CUS' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='CUS' And LastId<@lastid AND LOCA=@LOCATIONID
+
+
+DECLARE curCust CURSOR FOR 
+Select Cust_Code,Cust_Name,Contact_Name,Contact_No,Address1,Address2,Address3,Country,Region,Phone1,Phone2,Phone3,Fax,
+Email,Web_Site,CreditLimit,CreditPeriod,Route,CDate,State,[User_Id],Balance,AccBalance,PriceStat,OverDraft,Idx from 
+OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_Customer_Rpl)WHERE Idx>@lastid Order By Idx
+
+OPEN curCust
+
+FETCH NEXT FROM curCust
+
+INTO @Cust_Code,@Cust_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Region,@Phone1,@Phone2,@Phone3,
+@Fax,@Email,@Web_Site,@CreditLimit,@CreditPeriod,@Route,@CDate,@State,@User_Id,@Balance,@AccBalance,@PriceStat,@OverDraft,@Idx
+
+WHILE @@FETCH_STATUS = 0
+BEGIN     	
+	If Not Exists (Select Cust_Code From tb_Customer Where Cust_Code=@Cust_Code)
+	Begin
+    		Insert Into tb_Customer ([Cust_Code],[Cust_Name],[Contact_Name],[Contact_No],[Address1],[Address2],[Address3],[Country],[Region],[Phone1],[Phone2],
+		[Phone3],[Fax],[Email],[Web_Site],[CreditLimit],[CreditPeriod],[Route],[CDate],[State],[User_Id],[Balance],[AccBalance],[PriceStat],[OverDraft],[Download]) 
+		Values(@Cust_Code,@Cust_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Region,@Phone1,@Phone2,@Phone3,
+		@Fax,@Email,@Web_Site,@CreditLimit,@CreditPeriod,@Route,@CDate,@State,@User_Id,@Balance,@AccBalance,@PriceStat,@OverDraft,'F')
+	End
+	Else
+	Begin
+		Update tb_Customer Set 
+		[Cust_Name]	=@Cust_Name
+		,[Contact_Name]=@Contact_Name
+		,[Contact_No]	=@Contact_No
+		,[Address1]	=@Address1
+		,[Address2]	=@Address2
+		,[Address3]	=@Address2
+		,[Country]	=@Country
+		,[Region]	=@Region
+		,[Phone1]	=@Phone1
+		,[Phone2]	=@Phone2
+		,[Phone3]	=@Phone3
+		,[Fax]		=@Fax
+		,[Email]		=@Email
+		,[Web_Site]	=@Web_Site
+		,[CreditLimit]	=@CreditLimit
+		,[CreditPeriod]	=@CreditPeriod
+		,[Route]		=@Route
+		,[CDate]		=@CDate
+		,[State]		=@State
+		,[User_Id]	=@User_Id
+		,[Balance]	=@Balance
+		,[AccBalance]	=@AccBalance
+		,[PriceStat]	=@PriceStat
+		,[OverDraft] 	=@OverDraft
+		,[Download]	='F'
+		Where Cust_Code=@Cust_Code
+	End
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('CUS',@Idx,@LOCATIONID)
+
+        FETCH NEXT FROM curCust
+	INTO @Cust_Code,@Cust_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Region,@Phone1,@Phone2,@Phone3,
+	@Fax,@Email,@Web_Site,@CreditLimit,@CreditPeriod,@Route,@CDate,@State,@User_Id,@Balance,@AccBalance,@PriceStat,@OverDraft,@Idx
+
+END
+
+CLOSE curCust
+DEALLOCATE curCust
+
+
+--  tb_Supplier DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='SUP' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='SUP' And LastId<@lastid AND LOCA=@LOCATIONID
+
+DECLARE curSupp CURSOR FOR 
+Select Supp_Code,Supp_Name,Contact_Name,Contact_No,Address1,Address2,Address3,Country,Phone1,Phone2,Phone3,Fax,Email,Web_Site,CDate,Status,[User_Id],Idx from 
+OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_Supplier_Rpl)WHERE Idx>@lastid Order By Idx
+
+OPEN curSupp
+
+FETCH NEXT FROM curSupp
+INTO @Supp_Code,@Supp_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Phone1,@Phone2,@Phone3,@Fax,@Email,@Web_Site,@CDate,@Status,@User_Id,@Idx
+
+WHILE @@FETCH_STATUS = 0
+BEGIN   
+	If Not Exists (Select Supp_Code From tb_Supplier Where Supp_Code= @Supp_Code)
+	Begin 	
+    		Insert Into tb_Supplier ([Supp_Code],[Supp_Name],[Contact_Name],[Contact_No],[Address1],[Address2],[Address3],[Country],[Phone1],[Phone2],[Phone3],[Fax],[Email],[Web_Site],[CDate],[Status],[User_Id],[Download]) 
+		Values(@Supp_Code,@Supp_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Phone1,@Phone2,@Phone3,@Fax,@Email,@Web_Site,@CDate,@Status,@User_Id,'F')		
+	End
+	Else
+	Begin
+		Update  tb_Supplier Set 	[Supp_Name]		=@Supp_Name,
+					[Contact_Name]		=@Contact_Name,
+					[Contact_No]		=@Contact_No,
+					[Address1]		=@Address1,
+					[Address2]		=@Address2,
+					[Address3]		=@Address3,
+					[Country]		=@Country,
+					[Phone1]		=@Phone1,
+					[Phone2]		=@Phone2,
+					[Phone3]		=@Phone3,
+					[Fax]			=@Fax,
+					[Email]			=@Email,
+					[Web_Site]		=@Web_Site,
+					[CDate]			=@CDate,
+					[Status]			=@Status,
+					[User_Id]		=@User_Id,
+					[Download]		='F'
+					Where Supp_Code=@Supp_Code		
+	End
+
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('SUP',@Idx,@LOCATIONID)
+
+       	FETCH NEXT FROM curSupp
+	INTO @Supp_Code,@Supp_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Phone1,@Phone2,@Phone3,@Fax,@Email,@Web_Site,@CDate,@Status,@User_Id,@Idx
+
+END
+
+CLOSE curSupp
+DEALLOCATE curSupp
+
+
+--  tb_Link1 DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='LN1' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='LN1' And LastId<@lastid AND LOCA=@LOCATIONID
+
+DECLARE curLink CURSOR FOR Select [User_Id],CDate,L1_Rate,Idx,L1_Code,L1_Name from 
+OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_Link1_Rpl)WHERE Idx>@lastid Order By Idx
+
+OPEN curLink 
+FETCH NEXT FROM curLink	INTO @User_Id,@CDate,@L1_Rate,@Idx,@L1_Code,@L1_Name
+
+WHILE @@FETCH_STATUS = 0
+BEGIN     	
+	If Not Exists (Select L1_Code From tb_Link1 Where L1_Code= @L1_Code)
+	Begin 	
+    		Insert Into tb_Link1 ([User_Id],[CDate],[L1_Rate],[L1_Code],[L1_Name])  Values(@User_Id,@CDate,@L1_Rate,@L1_Code,@L1_Name)	
+		
+	End
+	Else
+	Begin
+		Update tb_Link1 Set [User_Id]=@User_Id,CDate=@CDate,L1_Rate=@L1_Rate,L1_Name=@L1_Name Where L1_Code=@L1_Code
+	End
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('LN1',@Idx,@LOCATIONID)
+
+        	FETCH NEXT FROM curLink INTO @User_Id,@CDate,@L1_Rate,@Idx,@L1_Code,@L1_Name
+
+END
+
+CLOSE curLink
+DEALLOCATE curLink
+
+
+--  tb_Category DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='CAT' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='CAT' And LastId<@lastid AND LOCA=@LOCATIONID
+
+
+DECLARE curCat CURSOR FOR 
+	Select User_Id,CDate,Cat_Rate,Idx,Cat_Code,Cat_Name from 
+OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_Category_Rpl)WHERE Idx>@lastid Order By Idx
+
+OPEN curCat
+
+FETCH NEXT FROM curCat INTO @User_Id,@CDate,@Cat_Rate,@Idx,@Cat_Code,@Cat_Name
+
+WHILE @@FETCH_STATUS = 0
+BEGIN     	
+	If Not Exists (Select Cat_Code From tb_Category Where Cat_Code= @Cat_Code)
+	Begin 	
+    		Insert Into tb_Category ([User_Id],[CDate],[Cat_Rate],[Cat_Code],[Cat_Name]) Values (@User_Id,@CDate,@Cat_Rate,@Cat_Code,@Cat_Name)			
+	End
+	Else
+	Begin
+		Update tb_Category Set Cat_Name=@Cat_Name,[User_Id]=@User_Id,[CDate]=@CDate,[Cat_Rate]=@Cat_Rate Where Cat_Code=@Cat_Code
+	End
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('CAT',@Idx,@LOCATIONID)
+        FETCH NEXT FROM curCat	INTO @User_Id,@CDate,@Cat_Rate,@Idx,@Cat_Code,@Cat_Name
+
+END
+
+CLOSE curCat
+DEALLOCATE curCat
+
+
+--  tb_SubCategory DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='SCAT' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='SCAT' And LastId<@lastid AND LOCA=@LOCATIONID
+
+
+DECLARE curSubCat CURSOR FOR 
+	Select Idx,CDate,User_Id,Cat_Code,SubCat_Code,SubCat_Name from 
+OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_SubCategory_Rpl)WHERE Idx>@lastid Order By Idx
+
+OPEN curSubCat
+
+FETCH NEXT FROM curSubCat INTO @Idx,@CDate,@User_Id,@Cat_Code,@SubCat_Code,@SubCat_Name
+
+WHILE @@FETCH_STATUS = 0
+BEGIN     	
+	If Not Exists (Select Cat_Code From tb_SubCategory Where Cat_Code= @Cat_Code And SubCat_Code=@SubCat_Code)
+	Begin 
+    		Insert Into tb_SubCategory ([CDate],[User_Id],[Cat_Code],[SubCat_Code],[SubCat_Name])  Values (@CDate,@User_Id,@Cat_Code,@SubCat_Code,@SubCat_Name)		
+	End
+	Else
+	Begin
+		Update tb_SubCategory Set [CDate] =@CDate ,[User_Id]=@User_Id   ,[SubCat_Name] =@SubCat_Name Where [SubCat_Code]=@SubCat_Code And [Cat_Code]=@Cat_Code
+	End
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('SCAT',@Idx,@LOCATIONID)
+        FETCH NEXT FROM curSubCat
+	INTO @Idx,@CDate,@User_Id,@Cat_Code,@SubCat_Code,@SubCat_Name
+
+END
+
+CLOSE curSubCat
+DEALLOCATE curSubCat
+
+
+
+-- tb_Item DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='ITM' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='ITM' And LastId<@lastid AND LOCA=@LOCATIONID
+
+DECLARE curItem CURSOR FOR Select Item_Code,Ref_Code,Inv_Descrip,Descrip,Cat_Code,SubCat_Code,L1_Code,L2_Code,L3_Code,L4_Code,L5_Code,L6_Code,L7_Code,Supp_Code,Pack_Size,W_Margine,W_Margine,R_Margine,
+	R_Margine,PUnit,EUnit,Tax1,Tax2,Tax3,Countable,Use_Exp,ComRate,ItemType,ConvertFact,ConvertFactUnit,isCombined,isTaxApply,isNbtApply,Idx,barcode from 
+	OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_Item_Rpl)WHERE Idx>@lastid Order By Idx
+
+OPEN curItem
+
+FETCH NEXT FROM curItem INTO @Item_Code,@Ref_Code,@Inv_Descrip,@Descrip,@Cat_Code,@SubCat_Code,@L1_Code,@L2_Code,@L3_Code,@L4_Code,@L5_Code,@L6_Code,@L7_Code,@Supp_Code,@Pack_Size,@W_Margine,@W_Margine,
+@R_Margine,@R_Margine,@PUnit,@EUnit,@Tax1,@Tax2,@Tax3,@Countable,@Use_Exp,@ComRate,@ItemType,@ConvertFact,@ConvertFactUnit,@isCombined,@isTaxApply,@isNbtApply,@Idx,@barcode
+
+WHILE @@FETCH_STATUS = 0
+BEGIN     	
+	IF (Not Exists(Select Item_Code From tb_Item Where Item_Code =@Item_Code))	
+	Begin
+	    	Insert Into tb_Item ([Item_Code],[Ref_Code],[Inv_Descrip],[Descrip],[Cat_Code],[SubCat_Code],[L1_Code],[L2_Code],[L3_Code],[L4_Code],[L5_Code],[L6_Code],[L7_Code], [Supp_Code],[Pack_Size],[W_Margine],[R_Margine],[PUnit],[EUnit],[Tax1],[Tax2],[Tax3],[Countable],[Use_Exp],[ComRate],[ItemType],[ConvertFact],[ConvertFactUnit],[isCombined],[isTaxApply],[isNbtApply],[Barcode]) 		
+                               Values(@Item_Code,@Ref_Code,@Inv_Descrip,@Descrip,@Cat_Code,@SubCat_Code     ,@L1_Code ,@L2_Code,@L3_Code,@L4_Code,@L5_Code,@L6_Code,@L7_Code,@Supp_Code,@Pack_Size,@W_Margine,@R_Margine,@PUnit,@EUnit,@Tax1,@Tax2,@Tax3,@Countable,@Use_Exp,@ComRate,@ItemType,@ConvertFact,@ConvertFactUnit,@isCombined,@isTaxApply,@isNbtApply,@barcode)
+	End
+	Else
+	Begin
+		Update tb_Item Set 	[Ref_Code]	=@Ref_Code
+					,[Inv_Descrip]	=@Inv_Descrip
+					,[Descrip]	=@Descrip
+					,[Cat_Code]	=@Cat_Code
+					,[SubCat_Code]	=@SubCat_Code
+					,[L1_Code]	=@L1_Code
+					,[L2_Code]	=@L2_Code
+					,[L3_Code] 	=@L3_Code 
+					,[L4_Code] 	=@L4_Code  
+					,[L5_Code] 	=@L5_Code  
+					,[L6_Code] 	=@L6_Code  
+					,[L7_Code] 	=@L7_Code  			
+					,[Supp_Code]	=@Supp_Code
+					,[Pack_Size]	=@Pack_Size
+					,[W_Margine]	=@W_Margine
+					,[R_Margine]	=@R_Margine
+					,[PUnit]		=@PUnit
+					,[EUnit]		=@EUnit
+					,[Tax1]		=@Tax1
+					,[Tax2]		=@Tax2
+					,[Tax3]		=@Tax3
+					,[Countable]	=@Countable
+					,[Use_Exp]	=@Use_Exp
+					,[ComRate]	=@ComRate
+					,[ItemType]	=@ItemType
+					,[ConvertFact]	=@ConvertFact
+					,[ConvertFactUnit]=@ConvertFactUnit
+					,[isCombined] =@isCombined
+					,[isTaxApply] =@isTaxApply
+					,[isNbtApply] =@isNbtApply
+					,[barcode] =@barcode
+			
+					Where Item_Code=@Item_Code
+ 
+	End 
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('ITM',@Idx,@LOCATIONID)
+
+	FETCH NEXT FROM curItem INTO @Item_Code,@Ref_Code,@Inv_Descrip,@Descrip,@Cat_Code,@SubCat_Code,@L1_Code,@L2_Code,@L3_Code,@L4_Code,@L5_Code,@L6_Code,@L7_Code,@Supp_Code,@Pack_Size,@W_Margine,@W_Margine,
+	@R_Margine,@R_Margine,@PUnit,@EUnit,@Tax1,@Tax2,@Tax3,@Countable,@Use_Exp,@ComRate,@ItemType,@ConvertFact,@ConvertFactUnit,@isCombined,@isTaxApply,@isNbtApply,@Idx,@barcode
+
+END
+
+CLOSE curItem
+DEALLOCATE curItem
+
+
+--  tb_ItemDet DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='ITD' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='ITD' And LastId<@lastid AND LOCA=@LOCATIONID
+
+
+DECLARE curItemDet CURSOR FOR 
+	Select Lock_S,Lock_P,NoDiscount,User_Id,CDate,EditDate,SPQ,TPQ,FPQ,Re_Qty,Rol,Qty,Idx,PRet_Price,PWhole_Price,PSp_Price,ERet_Price,EWhole_Price,ESp_Price,Cost_Price,SPR,TPR,FPR,Item_Code,Loca_Code,Cost_Code,BinNo from 
+	OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_ItemDet_Rpl)WHERE Idx>@lastid Order By Idx
+
+OPEN curItemDet
+
+	FETCH NEXT FROM curItemDet
+	INTO @Lock_S,@Lock_P,@NoDiscount,@User_Id,@CDate,@EditDate,@SPQ,@TPQ,@FPQ,@Re_Qty,@Rol,@Qty,@Idx,@PRet_Price,@PWhole_Price,@PSp_Price,
+	@ERet_Price,@EWhole_Price,@ESp_Price,@Cost_Price,@SPR,@TPR,@FPR,@Item_Code,@Loca_Code,@Cost_Code,@BinNo
+
+WHILE @@FETCH_STATUS = 0
+BEGIN     	
+	If Not Exists (Select Item_Code From tb_ItemDet Where Item_Code=@Item_Code and Loca_Code=@Loca_Code)
+	Begin
+    		Insert Into tb_ItemDet ([Lock_S],[Lock_P],[NoDiscount],[User_Id],[CDate],[EditDate],[SPQ],[TPQ],[FPQ],[Re_Qty],[Rol],[Qty],[PRet_Price],[PWhole_Price],[PSp_Price],[ERet_Price],[EWhole_Price],[ESp_Price],[Cost_Price],[SPR],[TPR],[FPR],[Item_Code],[Loca_Code],[Cost_Code],[BinNo]) 
+                Values(@Lock_S,@Lock_P,@NoDiscount,@User_Id,@CDate,@EditDate,@SPQ,@TPQ,@FPQ,@Re_Qty,@Rol,@Qty,@PRet_Price,@PWhole_Price,@PSp_Price,@ERet_Price,@EWhole_Price,@ESp_Price,@Cost_Price,@SPR,@TPR,@FPR,@Item_Code,@Loca_Code,@Cost_Code,@BinNo)
+	End
+	Else
+	Begin
+		Update  tb_ItemDet Set 
+		 [Lock_S]	=@Lock_S
+		,[Lock_P]	=@Lock_P
+		,[NoDiscount]	=@NoDiscount
+		,[User_Id]	=@User_Id
+		,[CDate]		=@CDate
+		,[EditDate]	=@EditDate
+		,[SPQ]		=@SPQ
+		,[TPQ]		=@TPQ
+		,[FPQ]		=@FPQ
+		,[Re_Qty]	=@Re_Qty
+		,[Rol]		=@Rol
+		,[Qty]		=@Qty
+		,[PRet_Price]	=@PRet_Price
+		,[PWhole_Price]	=@PWhole_Price
+		,[PSp_Price]	=@PSp_Price
+		,[ERet_Price]	=@ERet_Price
+		,[EWhole_Price]	=@EWhole_Price
+		,[ESp_Price]	=@ESp_Price
+		,[Cost_Price]	=@Cost_Price
+		,[SPR]		=@SPR
+		,[TPR]		=@TPR
+		,[FPR]		=@FPR
+		,[Item_Code]	=@Item_Code
+		,[Loca_Code]	=@Loca_Code
+		,[Cost_Code]	=@Cost_Code
+		,[BinNo] 	=@BinNo
+		Where Item_Code=@item_Code And Loca_Code=@Loca_Code
+	End
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('ITD',@Idx,@LOCATIONID)
+
+        	FETCH NEXT FROM curItemDet
+	INTO @Lock_S,@Lock_P,@NoDiscount,@User_Id,@CDate,@EditDate,@SPQ,@TPQ,@FPQ,@Re_Qty,@Rol,@Qty,@Idx,@PRet_Price,@PWhole_Price,@PSp_Price,
+	@ERet_Price,@EWhole_Price,@ESp_Price,@Cost_Price,@SPR,@TPR,@FPR,@Item_Code,@Loca_Code,@Cost_Code,@BinNo
+
+END
+
+CLOSE curItemDet
+DEALLOCATE curItemDet
+
+--  tb_Colour_Size DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='ITC' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='ITC' And LastId<@lastid AND LOCA=@LOCATIONID
+
+
+DECLARE curItemColour CURSOR FOR 
+	Select ItemCode, CSCode, CSName, Rate, Price, Qty, Discount, CCode, SCode, @LOCATIONID, Idx from 
+	OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_Colour_Size)WHERE locacode='02' and Idx>@lastid Order By Idx
+
+OPEN curItemColour
+
+	FETCH NEXT FROM curItemColour
+	INTO @ItemCode,@CSCode,@CSName,@Rate,@Price,@Qty,@Discount,@CCode,@SCode,@LocaCode,@Idx
+
+WHILE @@FETCH_STATUS = 0
+BEGIN     	
+	If Not Exists (Select ItemCode From tb_Colour_Size Where CSCode=@CSCode and LocaCode=@LocaCode)
+	Begin
+    		Insert Into tb_Colour_Size ([ItemCode],[CSCode],[CSName],[Rate],[Price],[Qty],[Discount],[CCode],[SCode],[LocaCode]) 
+                Values(@ItemCode,@CSCode,@CSName,@Rate,@Price,@Qty,@Discount,@CCode,@SCode,@LocaCode)
+	End
+	Else
+	Begin
+		Update  tb_Colour_Size Set 
+
+			 [ItemCode]=@ItemCode
+			,[CSCode]  =@CSCode
+			,[CSName]  =@CSName
+			,[Rate]    =@Rate
+			,[Price]   =@Price
+			,[Qty]     =@Qty
+			,[Discount]=@Discount
+			,[CCode]   =@CCode
+			,[SCode]   =@SCode
+			,[LocaCode]=@LocaCode
+
+		Where CSCode=@CSCode And LocaCode=@LocaCode
+	End
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('ITC',@Idx,@LOCATIONID)
+
+        	FETCH NEXT FROM curItemColour
+	INTO @ItemCode,@CSCode,@CSName,@Rate,@Price,@Qty,@Discount,@CCode,@SCode,@LocaCode,@Idx
+END
+
+CLOSE curItemColour
+DEALLOCATE curItemColour
+
+
+--  tb_SalesRep DOWNLOAD
+
+
+Select @lastid=IsNull(Max(LastId),0) From tb_DownloadIdx Where Iid='REP' AND LOCA=@LOCATIONID
+Delete From tb_DownloadIdx Where Iid='REP' And LastId<@lastid AND LOCA=@LOCATIONID
+
+
+DECLARE curRep CURSOR FOR 
+	Select Rep_Code,Rep_Name,Contact_Name,Contact_No,Address1,Address2,Address3,Country,Phone1,Phone2,Phone3,Fax,Email,Web_Site,CommRate,TargetAmt,Rep,CDate,State,User_Id,idx from 
+	OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tb_SalesRep_Rpl)WHERE Idx>@lastid Order By Idx
+
+OPEN curRep
+
+	FETCH NEXT FROM curRep
+	INTO @Rep_Code,@Rep_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Phone1,@Phone2,
+	     @Phone3,@Fax,@Email,@Web_Site,@CommRate,@TargetAmt,@Rep,@CDate,@State,@User_Id,@idx
+WHILE @@FETCH_STATUS = 0
+BEGIN     	
+	Delete From tb_SalesRep Where Rep_Code=@Rep_Code
+
+
+	Insert Into tb_SalesRep ([Rep_Code],[Rep_Name],[Contact_Name],[Contact_No],[Address1],[Address2],[Address3],[Country],[Phone1],[Phone2],[Phone3],[Fax],[Email],[Web_Site],[CommRate],[TargetAmt],[Rep],[CDate],[State],[User_Id])
+	Values (@Rep_Code,@Rep_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Phone1,@Phone2,
+	@Phone3,@Fax,@Email,@Web_Site,@CommRate,@TargetAmt,@Rep,@CDate,@State,@User_Id)
+
+	Insert Into tb_DownloadIdx ([Iid],[lastid],[LOCA]) Values ('REP',@Idx,@LOCATIONID)
+
+	FETCH NEXT FROM curRep
+	INTO @Rep_Code,@Rep_Name,@Contact_Name,@Contact_No,@Address1,@Address2,@Address3,@Country,@Phone1,@Phone2,
+	     @Phone3,@Fax,@Email,@Web_Site,@CommRate,@TargetAmt,@Rep,@CDate,@State,@User_Id,@idx
+
+
+END
+
+CLOSE curRep
+
+DEALLOCATE curRep
+
+------------------------
+delete from tbCashier
+ INSERT INTO [EasyWay].[dbo].[tbCashier]([Code],[Loca],[Name],[LogName],[Pwd],[Encode],[Type],[FPlu],[FRPlu],[FVPlu],[FDept]
+           ,[FVoucher],[FSettle],[FMenu],[FPout],[FReload],[FNPrice],[VNPrice],[FDPrice],[FSeek],[FASeek],[FError],[FVoid]
+           ,[FRefund],[VRefund],[FClear],[FSusp],[VSusp],[FRcl],[FRclNet],[FCancel],[VCancel],[FTotal],[FCopy],[FJnl],[FMdc]
+           ,[FRAcc],[FNsl],[FCust] ,[FSalesman],[FStaff],[FDisl] ,[FIDiscP],[VIDiscP],[FIDiscA],[VIDiscA],[FSDiscP],[VSDiscP]
+           ,[FSDiscA],[VSDiscA],[FChar],[FNewReg],[FMccd],[FSlType],[FCat],[FORDER],[PCash],[PCredCd],[PDebtCd],[PVoucher]
+           ,[PCredit],[PCheque],[PLoyalty],[PMCred],[PPoint],[PCashRfnd],[PNCashRfnd],[PAdvance],[PCredNote],[POther],[RXRead]
+           ,[RZRead],[RDiscount],[RRefnd],[RCashier],[RSalesman],[RPlu],[RLoyalty],[RPoint],[RCash],[RCredCd],[RCredit],[RVoucher]
+           ,[RMCred],[RCashRefund],[RAdvance],[RCredNote],[RCheque],[RSuspend],[RCancel],[RStaff],[RPout],[Act])
+           
+                         select           [Code],[Loca],[Name],[LogName],[Pwd],[Encode],[Type],[FPlu],[FRPlu],[FVPlu],[FDept]
+           ,[FVoucher],[FSettle],[FMenu],[FPout],[FReload],[FNPrice],[VNPrice],[FDPrice],[FSeek],[FASeek],[FError],[FVoid]
+           ,[FRefund],[VRefund] ,[FClear],[FSusp],[VSusp],[FRcl],[FRclNet],[FCancel],[VCancel],[FTotal],[FCopy],[FJnl],[FMdc]
+           ,[FRAcc],[FNsl],[FCust],[FSalesman],[FStaff],[FDisl],[FIDiscP],[VIDiscP],[FIDiscA],[VIDiscA],[FSDiscP],[VSDiscP]
+           ,[FSDiscA],[VSDiscA],[FChar],[FNewReg],[FMccd],[FSlType],[FCat],[FORDER],[PCash],[PCredCd],[PDebtCd],[PVoucher]
+           ,[PCredit],[PCheque],[PLoyalty],[PMCred],[PPoint],[PCashRfnd],[PNCashRfnd],[PAdvance],[PCredNote],[POther],[RXRead]
+           ,[RZRead],[RDiscount],[RRefnd],[RCashier],[RSalesman],[RPlu],[RLoyalty],[RPoint],[RCash],[RCredCd],[RCredit],[RVoucher]
+           ,[RMCred],[RCashRefund],[RAdvance],[RCredNote],[RCheque],[RSuspend],[RCancel],[RStaff],[RPout],[Act]
+           from OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.tbCashier)
+           
+           ----------------------
+           
+ Delete from tb_SearchItem
+
+INSERT INTO [tb_SearchItem]
+           ([Item_Code]           ,[Description]           ,[RefCode]           ,[BarCode]
+           ,[Pack]           ,[Cost]           ,[Rate]           ,[Qty]           ,[Ref]
+           ,[SupplierCode]           ,[SupplierName]           ,[CategoryCode]           ,[CategoryName]
+           ,[SubCategoryCode]           ,[SubCategoryName]           ,[Binno]           ,[Status]           ,[CrDate])
+           
+           select
+           [Item_Code]           ,[Description]           ,[RefCode]           ,[BarCode]
+           ,[Pack]           ,[Cost]           ,[Rate]           ,[Qty]           ,[Ref]
+           ,[SupplierCode]           ,[SupplierName]           ,[CategoryCode]           ,[CategoryName]
+           ,[SubCategoryCode]           ,[SubCategoryName]           ,[Binno]           ,[Status]           ,[CrDate]
+    
+  from OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.[tb_SearchItem])
+  
+  --------------------------
+  
+delete from [tb_PriceLink]
+  
+INSERT INTO [EasyWay].[dbo].[tb_PriceLink]([ItemCode],[Loca],[Inv_Descrip],[Price],[EWholePrice],[PRetPrice],[PWholePrice]
+             ,[PackSize],[CostPrice],[CreateDate],[CreateBy],[DeleteDate],[DeleteBy],[Status])
+           
+                               select      [ItemCode],[Loca],[Inv_Descrip],[Price],[EWholePrice],[PRetPrice],[PWholePrice]
+             ,[PackSize],[CostPrice],[CreateDate],[CreateBy],[DeleteDate],[DeleteBy],[Status]
+           from OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.[tb_PriceLink])
+           
+----------------------
+   
+delete from tb_PluLink
+
+INSERT INTO [EasyWay].[dbo].[tb_PluLink]([ItemCode],[LinkCode],[CreateDate],[CreateUser],[DeleteDate],[DeleteUser],[Status])
+                                      select        [ItemCode],[LinkCode],[CreateDate],[CreateUser],[DeleteDate],[DeleteUser],[Status]
+                                           from OpenRowset('Sqloledb','SARASA';'sa';'tstc123',EasyWay.Dbo.[tb_PluLink])
+     
+     
+  
+  
+     
+
+
+
+
+

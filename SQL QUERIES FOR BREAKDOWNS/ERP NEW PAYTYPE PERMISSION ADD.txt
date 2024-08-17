@@ -1,0 +1,9 @@
+use ERP
+			 
+
+ declare @funcname varchar(20)='64' --Paytype ID
+
+if not exists(select * from CashierFunction where FunctionName=@funcname)
+Insert Into dbo.CashierFunction (FunctionName, FunctionDescription, [Order], TypeID, IsDelete, IsValue, GroupOfCompanyID, CreatedUser, CreatedDate, ModifiedUser, ModifiedDate, DataTransfer)
+ values(@funcname, 'MINT Payment', (select MAX([order])+1 from CashierFunction), 0, 0, 1, 1, 'SARASA' ,GETDATE(), 'SARASA', GETDATE(), 2)
+

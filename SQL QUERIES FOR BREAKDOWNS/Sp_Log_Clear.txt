@@ -1,0 +1,14 @@
+
+Create Procedure Sp_Log_Clear
+
+As
+
+
+DBCC SHRINKFILE(Mast_Data_Log, 1)
+
+BACKUP LOG Mast_Data WITH TRUNCATE_ONLY
+
+DBCC SHRINKFILE(Mast_Data_Log, 1)
+
+
+GO

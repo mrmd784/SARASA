@@ -1,0 +1,560 @@
+USE [EasyWay]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_UPDATE_PURCHASE]    Script Date: 11/24/2023 00:52:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[sp_UPDATE_PURCHASE]
+--[dbo].[sp_UPDATE_PURCHASE] '401-EASYW3382','0','0','11-09-2018','A001','ATLAS','01000051',1,1,0,0,0,0,0,0,1500,'EASYWAY','01',1,0,1,0,0,0,0
+
+@SerialNo 		Varchar(20),
+@RefNo			Varchar(30),
+@RefNo2			Varchar(30),
+@PNDate			Datetime , 
+@SuppCode		Varchar(10),
+@SuppName		Varchar(50),
+@PODNo			Varchar(10),
+@PType			SmallInt,
+@PMode			SmallInt,
+@GrossAmount	Money,
+@TotDiscount	Money,
+@SubTotDiscount	Money,
+@Tax			Money,
+@Advance		Money,
+@AdvPMode		SmallInt,
+@NetAmount		Money,
+@UserName		Varchar(15),
+@LocaCode		Varchar(5),
+@Status			Int,
+@Returns 		Money=0,
+@UpdPrice		Int,
+@RefAmount		Money,
+@isExp			Int,
+@Disc			Varchar(10)	,
+@Nbt			Money=0,
+@RoundingDiff    Money=0,
+@ReturnDocNo	Varchar(20) ='' output	
+
+AS
+Declare @DFR 		As	Char(2)
+Declare @NextIdx 	As	Char(13)
+Declare @DocNo		As	Char(15)
+Declare @ReceNo		As	Char(10)
+Declare @AutoSerial	As 	Bit
+
+declare @Qty	Decimal(18,2)
+declare @Balqty Decimal(18,2)
+Declare @GrnNo	Varchar(8)
+declare @Amnt decimal(18,2)
+
+declare @ItmMgn	tinyint = 3
+declare @ProfitMgn tinyint = 1
+
+GetNextId: 
+Set @DFR	= ''
+Set @NextIdx= 0
+Set @Qty=0
+
+
+Update tb_TempPurch Set tb_TempPurch.ItemType =tb_Item.Use_Exp From tb_TempPurch Join tb_Item On tb_TempPurch.ItemCode=tb_Item.Item_Code
+Where tb_TempPurch.LocaCode= @LocaCode	And tb_TempPurch.SerialNo	= @SerialNo And tb_TempPurch.[ID]	= 'PCH'
+
+If @Status=1 
+	Begin
+		--Generate Batch SerialNumber
+		/*
+		Update tb_TempPurch Set BarcodeSerial='' Where   LocaCode	= @LocaCode	And	SerialNo= @SerialNo      And	[ID]	= 'PCH' 
+	
+		--Update t Set t.Barcodeserial=i.Item_Code From tb_Item i Join tb_TempPurch t On i.Item_Code=t.ItemCode  Where t.SerialNo	=@SerialNo And  t.LocaCode	=@LocaCode	And  t.[Id]	='PCH'    And ( i.AutoSerial=0 Or  i.AutoSerial IS Null)	
+	
+		Select @AutoSerial=Isnull(AutoSrl,0) From tb_Location Where Loca_Code=@LocaCode
+		If @AutoSerial=1
+		Begin
+			Declare @B_Item 	As 	Varchar(25)
+			Declare @B_Loca 	As	Varchar(5)
+			Declare @B_Idx	 	As	Bigint
+			Declare @B_NextIdx	As	Bigint
+			Declare @B_Serial 	As	Varchar(20)
+			Declare @B_Length	As	Int
+			
+			Select @B_Length=Isnull(CodeLength,8) from tb_BatchGen Where LocaCode=@LocaCode And [Id]='I'
+			
+			DECLARE curBatchNo CURSOR FOR Select Distinct LocaCode,ItemCode,Isnull(Min(IdNo),0) As IdNo From tb_TempPurch Where   LocaCode	= @LocaCode	And	SerialNo= @SerialNo      And	[ID]	= 'PCH' And BarcodeSerial=''
+			Group By LocaCode,ItemCode Order By Isnull(Min(IdNo),0)
+			OPEN curBatchNo
+			FETCH NEXT FROM curBatchNo INTO @B_Loca,@B_Item,@B_Idx
+			
+			WHILE @@FETCH_STATUS = 0
+			BEGIN  		
+				Select @B_NextIdx=IsNull(SerialNo,1) from tb_BatchGen Where LocaCode=@LocaCode And [Id]='I'
+				Update tb_BatchGen Set SerialNo=IsNull(SerialNo+1,2) Where LocaCode=@LocaCode And [Id]='I'
+				Set @B_Serial= Rtrim(@B_Loca) + Replicate('0',@B_Length-Len(Ltrim(Rtrim(Convert(Varchar,@B_NextIdx))))) + Ltrim(Rtrim(Convert(Varchar,@B_NextIdx)))
+				Update tb_TempPurch Set BarcodeSerial =@B_Serial  Where   LocaCode	= @LocaCode	And	SerialNo= @SerialNo      And	[ID]	= 'PCH'    And ItemCode=@B_Item
+			
+			    FETCH NEXT FROM curBatchNo INTO @B_Loca,@B_Item,@B_Idx			
+			END
+			
+			CLOSE curBatchNo
+			DEALLOCATE curBatchNo
+		End 
+		*/
+		--End Barcode Serial
+
+		Select @DFR = Ref_Code FROM tb_Location WHERE Loca_Code = @LocaCode
+			
+		UPDATE tb_System SET PNO=PNO+1 WHERE LocaCode=@LocaCode
+		
+		Select @NextIdx = Cast(PNO As Char(6)) FROM tb_System WHERE LocaCode = @LocaCode
+
+		Set @GrnNo=@NextIdx
+		Set @NextIdx = Replicate('0',6-Len(Rtrim(@NextIdx))) + Rtrim(@NextIdx)
+		
+		IF (@DFR Is Null)
+			Begin
+			Set  @DocNo= Rtrim(@NextIdx)	
+			End 
+		ELSE
+			Begin
+			Set  @DocNo= @DFR +  Rtrim(@NextIdx)	
+			End
+		
+		IF Exists(Select SerialNo From tb_PurSumm Where SerialNo=@DocNo And LocaCode=@LocaCode  And [Id]='PCH') Goto GetNextId
+		
+		--Reset Auto Generated Serial Numbers
+		Update tb_TempPurch Set Remark=Rtrim(@GrnNo) + '-' + Rtrim(@SuppCode)+ '-' + SUBSTRING(Remark,CHARINDEX ('-',Remark,CHARINDEX ('-',Remark,0)+1)+1,len(Remark))
+		Where LocaCode= @LocaCode	And SerialNo= @SerialNo  And ID	= 'PCH' And tb_TempPurch.ItemType='4' And CHARINDEX ('-',Remark,0)>0 And  CHARINDEX ('-',Remark,CHARINDEX ('-',Remark,0)+1)>0 And
+		(SUBSTRING(Remark,CHARINDEX ('-',Remark,0)+1,(CHARINDEX ('-',Remark,CHARINDEX ('-',Remark,0)+1)-CHARINDEX ('-',Remark,0)-1))='//' 
+		Or SUBSTRING(Remark,CHARINDEX ('-',Remark,0)+1,(CHARINDEX ('-',Remark,CHARINDEX ('-',Remark,0)+1)-CHARINDEX ('-',Remark,0)-1))=Rtrim(@SuppCode))
+	End 
+Else
+	Begin
+		Set @DocNo=@SerialNo
+	End
+
+BEGIN
+Select @Qty=sum(Qty) From  tb_TempPurch	Where   LocaCode= @LocaCode	And SerialNo= @SerialNo  And ID	= 'PCH'
+--VAT Updation
+
+Declare @VatP Decimal(12,2)
+DEclare @NbtP Decimal(12,2)
+Declare @VatMethod Int
+Select @VatP=ISNULL(vatPercentage,0),@NbtP=NBT,@VatMethod=Isnull(VatCalculationMethod,0) From tb_Location Where Loca_Code =@LocaCode
+
+Update t Set t.Ord=i.isTaxApply,Ord1=@VatP,Ord2=0 From tb_Item As i Join tb_TempPurch as t
+on i.item_Code=t.itemcode  Where   t.LocaCode	= @LocaCode	And t.SerialNo	= @SerialNo  And t.ID		= 'PCH'	
+
+If (@Tax<>0 And(@GrossAmount-@SubTotDiscount)<>0)
+Begin
+	Update tb_TempPurch Set Ord2= (CASE WHEN Amount=0 Or @GrossAmount=0 THEN CONVERT(FLOAT,0) ELSE (Convert(Float,@SubTotDiscount)/Convert(Float,@GrossAmount))*Convert(Float,Amount)END)
+	Where   LocaCode	= @LocaCode	And SerialNo	= @SerialNo  And ID		= 'PCH'	
+	
+	Declare @VatApplyTotal Decimal(18,6)
+
+	Select @VatApplyTotal=ISNULL(Sum(Amount-Ord2),0) From tb_TempPurch	Where   LocaCode= @LocaCode	And SerialNo= @SerialNo  And ID	= 'PCH'  And Ord=1
+
+	Update tb_TempPurch Set Ord2= @Tax/ @VatApplyTotal*(Amount-Ord2)
+	Where   LocaCode	= @LocaCode	And SerialNo	= @SerialNo  And ID		= 'PCH'	
+	
+	Update tb_TempPurch Set Ord2= 0 Where   LocaCode	= @LocaCode	And SerialNo	= @SerialNo  And ID		= 'PCH'	  And Ord=0
+	
+End
+/*
+Update t Set t.L1_Name=l.L1_Name From (tb_Link1 as l Join tb_Item As i on l.L1_Code=i.L1_Code) Join tb_TempPurch as t
+on i.item_Code=t.itemcode  Where   t.LocaCode	= @LocaCode	And t.SerialNo	= @SerialNo  And t.ID		= 'PCH'		
+
+Update t Set t.L2_Name=l.L2_Name From (tb_Link2 as l Join tb_Item As i on l.L2_Code=i.L2_Code) Join tb_TempPurch as t
+on i.item_Code=t.itemcode  Where   t.LocaCode	= @LocaCode	And t.SerialNo	= @SerialNo  And t.ID		= 'PCH'	
+
+Update t Set t.L3_Name=l.L3_Name From (tb_Link3 as l Join tb_Item As i on l.L3_Code=i.L3_Code) Join tb_TempPurch as t
+on i.item_Code=t.itemcode  Where   t.LocaCode	= @LocaCode	And t.SerialNo	= @SerialNo  And t.ID		= 'PCH'	
+
+Update t Set t.L4_Name=l.L4_Name From (tb_Link4 as l Join tb_Item As i on l.L4_Code=i.L4_Code) Join tb_TempPurch as t
+on i.item_Code=t.itemcode  Where   t.LocaCode	= @LocaCode	And t.SerialNo	= @SerialNo  And t.ID		= 'PCH'	
+*/
+
+
+
+Insert Into tb_PurSumm	 
+			([SerialNo]	,[LocaCode]		,[RefNo]			,[PDate]	,[SuppCode]	,[SuppName]	,[PODNo]	,[PType]	
+			,[PMode]	,[GAmount]		,[SubTotDiscount]	,[Tax]		,[NetAmount],[Advance]	,[PModeAdv]	,[Balance]
+			,[Id]		,[Status]		,[TrDate]			,[UserName]	,[Discount]	,[Returns]	,[RefAmount],[Disc]		,[Qty],[RefNo2] ,[Vat],[VatP],[Nbt],[RoDiff]) 
+Values 		(@DocNo		,@LocaCode		,@RefNo 			,@PNDate 	,@SuppCode 	,@SuppName 	,@PODNo 	,@PType 
+			,@PMode 	,@GrossAmount	,@SubTotDiscount	,(@Tax+@Nbt) 		,@NetAmount ,@Advance 	,@AdvPMode	,@NetAmount-@Advance-@Returns
+			,'PCH' 		,@Status 		,GetDate() 			,@UserName	,@TotDiscount,@Returns	,@RefAmount	,@Disc		,@Qty,@RefNo2 ,@Tax,@VatP,@Nbt,@RoundingDiff)
+
+Insert Into tb_PurDet	
+			([SerialNo]	,[LocaCode]	,[RefNo]		,[SuppCode]		,[ItemCode]	,[ItemDescrip]	,[Scale]			,[Unit]	
+			,[Cost]		,[Rate]		,[Qty]			,[GAmount]		,[Discp]	,[Discount]		,[Tax]				,[NetAmount]	
+			,[TrDate]	,[ID]		,[Status]		,[LnNo] 		,[PackSize]	,[PDate]		,[DiscountForTot]	
+			,[ExpDate]													
+			,[BatchNo]								,[ERet_Price]	,[Balance]	,[BarcodeSerial],[CSCode]
+			,[CSName]												,[L1_Name]	,[L2_Name]		,[L3_Name]			,[L4_Name],[Vat],[VatP],[Nbt])
+Select 		@DocNo		,@LocaCode	,@RefNo			,@SuppCode   	,ItemCode   ,ItemDescript 	,Scale				,Unit
+			,Cost		,Rate		,Qty            ,Amount+Discount,DiscP      ,Discount 		,tax+nbt	            ,Amount
+			,GetDate()	,Id			,@Status 		,IdNo			,[PackSize]	,@PNDate		,CASE WHEN Amount=0 Or @GrossAmount=0 THEN CONVERT(FLOAT,0) ELSE (Convert(Float,@SubTotDiscount)/Convert(Float,@GrossAmount))*Convert(Float,Amount)END
+			,Case When ItemType=2 Then Case Rtrim(Isnull(Remark,'')) When '' Then Null Else Remark End Else Null End		
+			,Rtrim(Isnull(Remark,''))				,ERet_Price		,Qty		,''				,Case When ITemType=3 Then Rtrim(Remark) Else '' End
+			,Case When ITemType=3 Then CSName Else '' End			,L1_Name	,L2_Name		,L3_Name			,L4_Name,tax,ORd1,Nbt
+From  tb_TempPurch	Where   
+			LocaCode	= @LocaCode	And
+			SerialNo	= @SerialNo And
+			ID			= 'PCH'
+			
+				
+		
+END
+/*
+###############################################################################################################################################################
+INSERT INTO tb_ItemSerialTmp
+[ItemCode],[Descrip] ,[BatchNo] ,[LocaCode] ,[RefNo],[Qty],[UserName] ,[Status] ,[Id] ,	[RefDate] ,[CostPrice],[RetPrice],[SuppCode] 
+
+SELECT  ,ItemCode ,ItemDescript ,,Case When ItemType=2 Then Case Rtrim(Isnull(Remark,'')) When '' Then Null Else Remark End Else Null End 
+,@LocaCode ,@RefNo	,Qty ,@UserName ,,@Status ,Id ,@PNDate ,ERet_Price,@SuppCode 
+###############################################################################################################################################################			
+*/
+
+--Update Balance From Purchase Order Note
+
+
+If RTRIM(LTRIM(@PODNo))<>'' 
+Begin
+	Create Table #tempurch (SerailNo Varchar(25),LocaCode Varchar(5),Id Char(3),ItemCode Varchar(25),Barcode Varchar(25),Qty Decimal(18,8))
+	Truncate Table #tempurch
+	Insert Into #tempurch (SerailNo,LocaCode,Id,ItemCode,Barcode,Qty) Select SerialNo,LocaCode,'ORD',ItemCode,Case When ItemType=3 Then RTRIM(CsCode)Else '' End,SUM(Qty) From 
+	tb_TempPurch Where   LocaCode= @LocaCode	And	SerialNo= @SerialNo And	ID	= 'PCH'
+	Group By SerialNo,LocaCode,ItemCode,Case When ItemType=3 Then RTRIM(CsCode)Else '' End
+	
+	Update tb_PurDet set tb_PurDet.Balance=tb_PurDet.Balance-#tempurch.Qty from tb_PurDet inner join #tempurch on tb_PurDet.ItemCode=#tempurch.ItemCode  
+	And tb_PurDet.CSCode=#tempurch.Barcode 
+	Where tb_PurDet.SerialNo=@PODNo and  tb_PurDet.LocaCode	= @LocaCode	and	tb_PurDet.ID = 'ORD'
+	
+	
+	
+	Select @Balqty=Isnull(sum(balance),0)   from tb_PurDet	Where serialNo=@PODNo and  LocaCode	= @LocaCode	and	ID	= 'ORD' 
+	--if @Balqty=0 Update tb_PurSumm set [Status]=0  where serialNo=@PODNo and id='ORD' and LocaCode	= @LocaCode	
+End
+
+
+
+
+If @Status= 1
+	Begin
+	--
+	Insert Into tb_ItemSerialTmp ([Idx],[ItemCode],[Descrip],[BatchNo],[LocaCode],[RefNo],[Qty],[UserName],[Status],[Id],[RefDate],[CostPrice],[RetPrice],[SuppCode])
+		Select IDNo,ItemCode,Rtrim(ItemDescript),RTRIM(Remark),@LocaCode,@DocNo,Qty,@UserName,@Status,'PCH',@PNDate,Cost,Rate,@SuppCode
+		From tb_TempPurch Where LocaCode	= @LocaCode	And SerialNo= @SerialNo And	[ID]= 'PCH' And ItemType=4	
+	--Price Change
+	--Item Waighted Price Update
+	Create Table #WaitedPrc (ItemCode Varchar(20),Stock Decimal(18,4),Cost Money,Qty Decimal(18,4),Amount Money,NewCost Money Null,Pack Int)
+	Truncate  Table #WaitedPrc
+	Insert Into #WaitedPrc (ItemCode,Stock,Cost,Qty,Amount,NewCost,Pack)Select ItemCode,0,0,Isnull(Sum(Qty*PackSize),0),Isnull(Sum(Amount),0),0 ,1
+				From  tb_TempPurch	Where   LocaCode	= @LocaCode	And
+								SerialNo	= @SerialNo      And
+								ID		= 'PCH' Group By itemcode
+	Create Table #WaitedTmp (ItemCode Varchar(20),Stock Decimal(18,4))
+	Truncate table #WaitedTmp
+	Insert Into #WaitedTmp (ItemCode,Stock) Select ItemCode,Isnull(Sum(Stock),0) From vw_Stock Where ItemCode In (Select ItemCode From #WaitedPrc) Group By vw_Stock.ItemCode
+	Update #WaitedPrc Set #WaitedPrc.Stock =#WaitedTmp.Stock From #WaitedPrc Join #WaitedTmp On #WaitedPrc.ItemCode=#WaitedTmp.ItemCode
+	Update #WaitedPrc Set #WaitedPrc.Cost=tb_ItemDet.AvgCost From #WaitedPrc Join tb_ItemDet On #WaitedPrc.ItemCode=tb_ItemDet.Item_Code Where tb_ItemDet.Loca_Code=@LocaCode
+	Update #WaitedPrc Set #WaitedPrc.Pack=tb_Item.Pack_Size From #WaitedPrc Join tb_Item On #WaitedPrc.ItemCode=tb_Item.Item_Code
+	Update #WaitedPrc Set NewCost=(((Stock/Pack*Cost)+Amount)/(Stock+Qty))*Pack Where (Stock+Qty)<>0
+	Update #WaitedPrc Set NewCost=Null Where (Stock+Qty)=0
+	Update tb_TempPurch Set tb_TempPurch.AvgCost=#WaitedPrc.NewCost From #WaitedPrc Join tb_TempPurch  On #WaitedPrc.ItemCode=tb_TempPurch.ItemCode
+				 Where  tb_TempPurch.LocaCode	= @LocaCode	And  tb_TempPurch.SerialNo	= @SerialNo      And ID		= 'PCH' And  #WaitedPrc.Cost<>#WaitedPrc.NewCost  And #WaitedPrc.NewCost  Is Not Null
+	Drop table #WaitedTmp
+	--//
+	Create table #TmpStock (ItemCode Varchar(20),LocaCode Char(5),Stock Decimal(18,4) Default(0),PackSize Int Default(1))
+	If (@UpdPrice=1 )
+		Begin			
+
+			Truncate  table #TmpStock
+            Declare @available int
+			select @available=count(itemcode) from vw_stock where ItemCode in (Select ItemCode From  tb_TempPurch	Where   LocaCode	= @LocaCode	And	SerialNo	= @SerialNo      And [ID]		= 'PCH')
+
+			if @available=0
+			begin
+			Insert Into #TmpStock (ItemCode,LocaCode,Stock,PackSize) Select ItemCode,LocaCode,0,1 From tb_TempPurch Where   LocaCode	= @LocaCode	And	SerialNo	= @SerialNo      And [ID]		= 'PCH'
+			End
+
+			else
+			begin
+            Insert Into #TmpStock (ItemCode,LocaCode,Stock,PackSize) Select ItemCode,LocaCode,Stock,1 From vw_Stock Where ItemCode In
+			(Select ItemCode From  tb_TempPurch	Where   LocaCode	= @LocaCode	And	SerialNo	= @SerialNo      And [ID]		= 'PCH')
+			End
+
+
+			Update S Set S.PackSize=I.Pack_Size From tb_Item As I Join #TmpStock As S On I.Item_Code=S.ItemCode				
+
+			INSERT INTO TB_PRICECHANGE	([ITEMCODE],[ITEMDESCRIP],[LOCACODE],[SUPPCODE],[QTY],[PACKSIZE],[COSTPRICE],[ERETPRICE]	
+			,[PRETPRICE],[EWHOLEPRICE],[PWHOLEPRICE],[NEWCOSTPRICE]	,[NEWERETPRICE],[NEWPRETPRICE],[NEWEWHOLEPRICE],[NEWPWHOLEPRICE]
+			,[CDATE],[USERNAME],[CTYPE],[AVGCOST],[NEWAVGCOST],[CSCode],[CSName])
+			SELECT P.ITEMCODE,P.ItemDescript,P.LOCACODE,P.SUPPCODE	,S.STOCK,S.PACKSIZE,I.COST_PRICE,I.ERET_PRICE	
+			,I.PRET_PRICE,I.EWHOLE_PRICE,I.PWHOLE_PRICE	,CASE WHEN P.COST=0 THEN I.COST_PRICE ELSE P.COST END,P.ERET_PRICE,I.PRET_PRICE,I.EWHOLE_PRICE,I.PWHOLE_PRICE
+			,GetDate(),@UserName,'ITU',I.AVGCOST,CASE WHEN P.AVGCOST=-1 THEN I.AVGCOST ELSE P.AVGCOST END,P.CSCode,P.CSName
+			FROM (TB_TEMPPURCH AS P 
+			JOIN TB_ITEMDET AS I ON P.ITEMCODE=I.ITEM_CODE) 
+			JOIN #TMPSTOCK AS S ON S.ITEMCODE=P.ITEMCODE  AND S.LOCACODE=I.LOCA_CODE
+			WHERE  P.LocaCode= @LocaCode And	P.SerialNo	= @SerialNo And P.[ID]	= 'PCH'  
+			AND  (P.COST<>I.COST_PRICE OR P.ERET_PRICE<>I.ERET_PRICE OR (P.AVGCOST<>I.AVGCOST AND P.AVGCOST<> -1))
+
+			Update tb_PriceLink Set tb_PriceLink.Status=3 From tb_Temppurch as p Join tb_PriceLink as l On 	p.ItemCode=l.ItemCode And p.Rate=l.Price 
+			Where   p.LocaCode	= @LocaCode	And
+				p.SerialNo	= @SerialNo      	And
+				p.[ID]		= 'PCH' 		And
+				p.Cost		>0
+
+			Insert Into tb_PriceLink ([ItemCode],[Loca],[Inv_Descrip],[Price],[CreateDate],[CreateBy],[Status],[EWholePrice],[PRetPrice],[PWholePrice],[PackSize],[CostPrice]) 
+			Select tb_ItemDet.Item_Code,tb_ItemDet.Loca_Code,Left(tb_Item.Inv_Descrip,40),tb_ItemDet.ERet_Price,GetDate(),@UserName,1 ,0,0,0,1,0
+			From ( tb_Item Join Tb_itemDet On tb_Item.Item_Code=tb_ITemDet.Item_Code) Join tb_Temppurch On tb_ItemDet.Item_Code=tb_Temppurch.ItemCode 
+			Where	 tb_Temppurch.Rate<> tb_ItemDet.ERet_Price 	And 
+			tb_ItemDet.ERet_Price>0 			And 
+			tb_Temppurch.LocaCode=@LocaCode 		And
+			tb_Temppurch.SerialNo=@SerialNo 		And
+			tb_Temppurch.[Id]='PCH' 			And
+			tb_Temppurch.Cost>0
+		
+			Update tb_TempPurch Set tb_TempPurch.CurCost =Cost From tb_TempPurch 
+			Where tb_TempPurch.LocaCode= @LocaCode	And tb_TempPurch.SerialNo	= @SerialNo And tb_TempPurch.[ID]	= 'PCH' 
+
+			If (@VatMethod=2)
+			Begin
+				Update tb_TempPurch Set CurCost= Convert(Decimal(12,1),Cost*(100+@NbtP)/100) 
+				where ID='PCH' And LocaCode=@LocaCode And SerialNo=@SerialNo And nbt<>0 
+				
+				Update tb_TempPurch Set CurCost= Convert(Decimal(12,1),Cost*(100+@VatP)/100) 
+				where ID='PCH' And LocaCode=@LocaCode And SerialNo=@SerialNo And tax<>0  
+			End
+
+			/*
+			UPDATE  I Set I.Cost_Price=P.Cost ,I.ERet_Price=P.Rate From tb_ItemDet AS  I Join tb_TempPurch as P On P.ItemCode=I.Item_Code 
+			Where   P.LocaCode	= @LocaCode	And	P.SerialNo	= @SerialNo      And P.[ID]	= 'PCH'  AND P.COST>0 AND (P.COST<>I.COST_PRICE OR P.RATE<>I.ERET_PRICE)
+			--------
+										INSERT INTO TB_ITEMDET_RPL([ITEM_CODE] 	,[LOCA_CODE] 	,[PRET_PRICE]	,[PWHOLE_PRICE]		,[PSP_PRICE]	,[ERET_PRICE]	,[EWHOLE_PRICE]	,[ESP_PRICE]
+								,[COST_PRICE]	,[AVGCOST]		,[COST_CODE]	,[LOCK_S]		,[LOCK_P]			,[NODISCOUNT]	,[RE_QTY] 		,[ROL]			,[USER_ID]		
+								,[CDATE]		,[EDITDATE]		,[BINNO]		,[SPQ]			,[SPR]				,[TPQ]			,[TPR]			,[FPQ]			,[FPR]
+								,[FIPQ]			,[FIPR]			,[SIPQ]			,[SIPR]			,[SEPQ]				,[SEPR]			,[EIPQ]			,[EIPR],[Commission])
+			select
+								a.[ITEM_CODE] 	,b.[LOCACODE] 	,a.[PRET_PRICE]	,a.[PWHOLE_PRICE]		,a.[PSP_PRICE]	,b.[rate],a.[EWHOLE_PRICE]	,a.[ESP_PRICE]
+								,b.[COST]	,a.[AVGCOST]		,a.[COST_CODE]	,a.[LOCK_S]		,a.[LOCK_P]			,a.[NODISCOUNT]	,a.[RE_QTY] 		,a.[ROL]			,a.[USER_ID]		
+								,a.[CDATE]		,a.[EDITDATE]		,a.[BINNO]		,a.[SPQ]			,a.[SPR]				,a.[TPQ]			,a.[TPR]			,a.[FPQ]			,a.[FPR]
+								,a.[FIPQ]			,a.[FIPR]			,a.[SIPQ]			,a.[SIPR]			,a.[SEPQ]				,a.[SEPR]			,a.[EIPQ]			,a.[EIPR],a.[Commission]
+								
+								from TB_ITEMDET as a join tb_TempPurch as b on a.Item_Code=b.ItemCode and Loca_Code=@LocaCode
+			*/
+			UPDATE  I Set I.Cost_Price=((P.Cost*P.Qty)+tax+nbt)/p.Qty ,I.ERet_Price=(P.Rate/p.PackSize),I.PRet_Price=(P.Rate)
+			From tb_ItemDet AS  I 
+			Join tb_TempPurch as P On P.ItemCode=I.Item_Code  And P.LocaCode=I.Loca_Code
+			Where   P.LocaCode	= @LocaCode	And	P.SerialNo	= @SerialNo      
+			And P.[ID]	= 'PCH' 
+			--AND P.CurCost>0 
+			AND (P.CurCost<>I.COST_PRICE OR P.RATE<>I.ERET_PRICE)
+
+			UPDATE I Set I.Cost_Code = P.CostCode 
+			From tb_ItemDet AS  I 
+			Join tb_TempPurch as P On P.ItemCode=I.Item_Code  And P.LocaCode=I.Loca_Code
+			Where P.LocaCode = @LocaCode And P.SerialNo	= @SerialNo      
+			And P.[ID]	= 'PCH' 
+
+			UPDATE  I Set I.Cost=((P.Cost*P.Qty)+tax+nbt)/p.Qty,
+			I.Rate=(P.Rate/p.PackSize),I.PRatePrice=(P.Rate) 
+			From tb_SearchItem AS  I 
+			Join tb_TempPurch as P On P.ItemCode=I.Item_Code  
+			--And P.LocaCode=I.LocaCode
+			Where   P.LocaCode	= @LocaCode	And	P.SerialNo	= @SerialNo  And P.[ID]	= 'PCH'  
+			AND P.CurCost>0 AND (P.CurCost<>I.COST OR P.RATE<>I.Rate)
+			--------
+			---START MARGIN UPDATE IN tb_Item------
+			SELECT @ItmMgn=ItmMgn,@ProfitMgn=ProfitMgn FROM tb_Location WHERE Loca_Code = @LocaCode
+			
+			--SELECT ItmMgn,ProfitMgn FROM tb_Location WHERE Loca_Code = '01'
+
+			if(@ItmMgn = 3)
+			BEGIN
+				IF(@ProfitMgn =0)
+					BEGIN
+						UPDATE  I Set I.R_Margine=CAST(CAST((P.Rate-P.Cost) / P.Cost * 100.00 AS DECIMAL(10,2)) AS varchar(50))+'%'
+						From tb_Item AS  I 
+						Join tb_TempPurch as P On P.ItemCode=I.Item_Code  
+						Where   P.LocaCode	= @LocaCode	And	P.SerialNo = @SerialNo      
+						And P.[ID]	= 'PCH' AND P.Cost > 0
+					END
+				ELSE
+					BEGIN
+						IF(@ProfitMgn =1)
+						BEGIN
+							UPDATE  I Set I.R_Margine=CAST(CAST((P.Rate-P.Cost) / P.Rate * 100.00 AS DECIMAL(10,2)) AS varchar(50))+'%'
+							From tb_Item AS  I 
+							Join tb_TempPurch as P On P.ItemCode=I.Item_Code  
+							Where   P.LocaCode	= @LocaCode	And	P.SerialNo	= @SerialNo      
+							And P.[ID]	= 'PCH' AND P.Rate > 0
+						END
+					END
+			END
+			---END MARGIN UPDATE IN tb_Item------
+
+			INSERT INTO TB_ITEMDET_RPL([ITEM_CODE] 	,[LOCA_CODE] 	,[PRET_PRICE]	,[PWHOLE_PRICE]		,[PSP_PRICE]	,[ERET_PRICE]	,[EWHOLE_PRICE]	,[ESP_PRICE]
+			,[COST_PRICE]	,[AVGCOST]		,[COST_CODE]	,[LOCK_S]		,[LOCK_P]			,[NODISCOUNT]	,[RE_QTY] 		,[ROL]			,[USER_ID]		
+			,[CDATE]		,[EDITDATE]		,[BINNO]		,[SPQ]			,[SPR]				,[TPQ]			,[TPR]			,[FPQ]			,[FPR]
+			,[FIPQ]			,[FIPR]			,[SIPQ]			,[SIPR]			,[SEPQ]				,[SEPR]			,[EIPQ]			,[EIPR],[Commission])
+			select
+			a.[ITEM_CODE] 	,a.[LOCA_CODE] 	,a.[PRET_PRICE]	,a.[PWHOLE_PRICE]		,a.[PSP_PRICE]	,b.[rate],a.[EWHOLE_PRICE]	,a.[ESP_PRICE]
+			,b.[COST]	,a.[AVGCOST]		,a.[COST_CODE]	,a.[LOCK_S]		,a.[LOCK_P]			,a.[NODISCOUNT]	,a.[RE_QTY] 		,a.[ROL]			,a.[USER_ID]		
+			,a.[CDATE]		,a.[EDITDATE]		,a.[BINNO]		,a.[SPQ]			,a.[SPR]				,a.[TPQ]			,a.[TPR]			,a.[FPQ]			,a.[FPR]
+			,a.[FIPQ]			,a.[FIPR]			,a.[SIPQ]			,a.[SIPR]			,a.[SEPQ]				,a.[SEPR]			,a.[EIPQ]			,a.[EIPR],a.[Commission]			
+			from TB_ITEMDET as a join tb_TempPurch as b on a.Item_Code=b.ItemCode and Loca_Code=@LocaCode
+			WHERE b.SerialNo	= @SerialNo   And b.[ID]= 'PCH' And	b.LocaCode=@LocaCode
+								
+			---------------
+			Update tb_ItemDet Set tb_ItemDet.AvgCost=#WaitedPrc.NewCost From tb_ItemDet Join #WaitedPrc On tb_ItemDet.Item_Code=#WaitedPrc.ItemCode Where #WaitedPrc.Cost<>#WaitedPrc.NewCost 
+
+			UPDATE  J Set J.rate=P.Cost ,J.Price=P.rate From tb_Colour_Size AS  J Join tb_TempPurch as P On P.CSCode=J.CSCode 
+			Where   P.LocaCode	= @LocaCode	And	P.SerialNo	= @SerialNo      And P.[ID]	= 'PCH'  AND P.COST>0 AND (P.COST<>J.Rate OR P.ERET_PRICE<>J.PRICE)
+			
+			--UPDATE  I Set I.R_Margine=Rtrim(Convert(Char(9),Convert(Float,(((P.ERet_Price-P.Cost)*100)/P.Cost))))+'%' From tb_Item AS  I Join tb_TempPurch as P On P.ItemCode=I.Item_Code 
+			--Where   P.LocaCode	= @LocaCode	And	P.SerialNo	= @SerialNo      And P.[ID]		= 'PCH'  AND P.COST>0
+		
+			--Drop table #TmpStock
+		End
+		Else
+		Begin
+			Truncate  table #TmpStock
+
+			Insert Into #TmpStock (ItemCode,LocaCode,Stock,PackSize) Select ItemCode,LocaCode,Stock,1 From vw_Stock Where ItemCode In
+			(Select ItemCode From  tb_TempPurch	Where   LocaCode	= @LocaCode	And	SerialNo	= @SerialNo      And [ID]		= 'PCH')
+
+			Update S Set S.PackSize=I.Pack_Size From tb_Item As I Join #TmpStock As S On I.Item_Code=S.ItemCode
+
+			Update tb_ItemDet Set tb_ItemDet.AvgCost=#WaitedPrc.NewCost From tb_ItemDet Join #WaitedPrc On tb_ItemDet.Item_Code=#WaitedPrc.ItemCode Where #WaitedPrc.Cost<>#WaitedPrc.NewCost 
+
+							
+			INSERT INTO TB_PRICECHANGE	([ITEMCODE]		,[ITEMDESCRIP]	,[LOCACODE]	,[SUPPCODE]	,[QTY]		,[PACKSIZE]		,[COSTPRICE]		,[ERETPRICE]	
+								,[PRETPRICE]		,[EWHOLEPRICE]	,[PWHOLEPRICE]	,[NEWCOSTPRICE]	,[NEWERETPRICE]	,[NEWPRETPRICE]	,[NEWEWHOLEPRICE]	,[NEWPWHOLEPRICE]
+								,[CDATE]		,[USERNAME]		,[CTYPE]		,[AVGCOST]		,[NEWAVGCOST],[CSCode],[CSName])
+			SELECT				 P.ITEMCODE		,P.ItemDescript		,P.LOCACODE	,P.SUPPCODE	,S.STOCK	,S.PACKSIZE	,I.COST_PRICE		,I.ERET_PRICE	
+								,I.PRET_PRICE		,I.EWHOLE_PRICE	,I.PWHOLE_PRICE	,CASE WHEN P.COST=0 THEN	I.COST_PRICE ELSE P.COST END	,P.ERET_PRICE	,I.PRET_PRICE	,I.EWHOLE_PRICE		,I.PWHOLE_PRICE
+								,GetDate()		,@UserName		,'ITU' 			,I.AVGCOST		,CASE WHEN P.AVGCOST=-1 THEN I.AVGCOST ELSE P.AVGCOST END,P.CSCode,P.CSName
+			FROM (TB_TEMPPURCH AS P JOIN TB_ITEMDET AS I ON P.ITEMCODE=I.ITEM_CODE) JOIN #TMPSTOCK AS S ON S.ITEMCODE=P.ITEMCODE  AND S.LOCACODE=I.LOCA_CODE
+			WHERE  P.LocaCode	= @LocaCode	And	P.SerialNo	= @SerialNo      And P.[ID]	= 'PCH'  AND  (P.AVGCOST<>I.AVGCOST AND P.AVGCOST<> -1)
+		End
+	Drop table #TmpStock
+	Drop Table #WaitedPrc
+
+
+	Insert Into tb_Stock	
+				([SerialNo]		,[LocaCode]		,[RefNo]	,[PDate]		,[SuppCode]	,[ItemCode]	,[Qty]		,[Balance]	,[Rate]		,[RetPrice]
+				,[Cost]							,[RealCost]					,[ID]		,[CrDate]	,[Scale]		,[PackSize]	
+				,[ExpDate]
+				,[BatchNo]		,[Type]			,[CSCode]											
+				,[CSName]									,[BarcodeSerial],[Status])                                                
+	Select 		@DocNo			,@LocaCode		,@RefNo		,@PNDate		,@SuppCode	,ItemCode	,Sum(Qty) 	,Sum(Qty)	,ERet_Price	,Rate
+				,Sum(Discount + Amount)/Sum(Qty),Sum(Amount)/Sum(Qty)		,'PCH'		,GetDate()	,Scale		,PackSize	
+				,Case When ItemType=2 Then Case Rtrim(Isnull(Remark,'')) When '' Then Null Else Remark End Else Null End
+				,Rtrim(Remark)	,@PType			,Case When ITemType=3 Then Rtrim(Remark) Else '' End
+				,Case When ITemType=3 Then CSName Else '' End,''			,1
+	From tb_TempPurch 	Where   LocaCode	= @LocaCode	And
+					SerialNo	= @SerialNo      And
+					ID		= 'PCH'
+				Group By ItemCode,Scale,PackSize,Rate,ERet_Price,Rtrim(Remark)
+				,Case When ItemType=2 Then Case Rtrim(Isnull(Remark,'')) When '' Then Null Else Remark End Else Null End
+				,Case When ITemType=3 Then Rtrim(Remark) Else '' End,Case When ITemType=3 Then CSName Else '' End
+	/*
+	If (@AutoSerial=1)
+	Begin
+		Insert Into tb_StockSumm ([LocaCode]	,[SerialNo]	,[PDate]		,[Iid]	,[ItemCode]	,[BarcodeSerial]		,[BatchNo]		
+					,[ExpDate]																		,[Qty]			,[Balance]		,[Status]		
+					,[CrDate]	,[Cost]										,[Price]							,[SuppCode]		,[Adjust]
+					,[Tog]		,[Opb],[CSCode])
+		Select			@LocaCode	,@DocNo	,@PNDate	,'PCH'	,ItemCode	,BarcodeSerial		,Case When @IsExp<>1 Then Rtrim(Isnull(Remark,'')) Else Null End,
+					Case When @IsExp=1 Then Case Rtrim(Remark) When '' Then Null When '__-__-____' Then Null Else Convert(Datetime,remark,103) End Else Null End		,Sum(PackSize*Qty)	,Sum(PackSize*Qty)	,1
+					,GetDate()	,Case When Sum(Amount)<>0 then Sum(Amount)/Sum(PackSize*Qty) Else 0 End	,Isnull(Sum(ERet_Price*Qty)/Sum(PackSize*Qty),0)		,@SuppCode		,0
+					,0		,0,CSCode
+		From tb_TempPurch 	Where   LocaCode	= @LocaCode	And
+						SerialNo	= @SerialNo      And
+						ID		= 'PCH'
+					Group By ItemCode,BarcodeSerial,Case When @IsExp=1 Then Case Rtrim(Remark) When '' Then Null When '__-__-____' Then Null Else Convert(Datetime,remark,103) End Else Null End,Case When @IsExp<>1 Then Rtrim(Isnull(Remark,'')) Else Null END,CSCode,CSName
+	End
+	*/
+	Insert Into tb_Movement	([SerialNo]				,[LocaCode]	,[ID]			,[Pdate]		,[ItemCode]	,[SuppCode]	,[PackSize]	,[Qty]		,[Bal]		
+				,[Cost]					,[Rate]		,[RealCost])
+	Select			@DocNo				,@LocaCode	,'PCH'			,@PNDate	,ItemCode	,@SuppCode	,PackSize	,Sum(Qty)	,Sum(Qty)	
+				,Sum(Discount + Amount)/Sum(Qty)	,Rate		,Sum(Amount)/Sum(Qty)
+	From tb_TempPurch 	Where   LocaCode	= @LocaCode	And
+					SerialNo	= @SerialNo      And
+					ID		= 'PCH'
+				Group By ItemCode,PackSize,Rate
+
+	Insert Into tb_PurQty 	([ItemCode]	,[LocaCode]	,[Qty]		,[Cr_Date])
+	Select 			ItemCode	,@LocaCode	,Sum(Qty)	,GetDate()
+	From tb_TempPurch 	Where   LocaCode	= @LocaCode	And
+					SerialNo	= @SerialNo      And
+					ID		= 'PCH'
+				Group By ItemCode
+	
+
+	IF @PMode<>1 --For Non Cash Payments
+		Begin
+			Insert Into tb_Payment 	([SerialNo]	,[ReceiptNo]	,[RefNo]	,[CustCode]	,[CustName]	,[InvoiceDate]	,[Amount]	,[Balance]				
+						,[Id]		,[Status]		,[Type]		,[PMode]	,[UserId]	,[Tr_Date]	,[LocaCode]	,[CreditNote]	,[DebitNote]	)
+			Values			(@DocNo	,@DocNo          	,@RefNo      	,@SuppCode	,@SuppName    	,@PNDate	,@NetAmount	,@NetAmount-@Advance	---@Returns                       
+						,'PCH'		,1		,@PType	,@PMode	,@UserName	,GetDate()	,@LocaCode	,0		,0)
+		End
+	Else       --For Cash payments
+		Begin
+			Insert Into tb_Payment 	([SerialNo]	,[ReceiptNo]	,[RefNo]	,[CustCode]	,[CustName]	,[InvoiceDate]	,[Amount]	,[Balance]				
+						,[Id]		,[Status]		,[Type]		,[PMode]	,[UserId]	,[Tr_Date]	,[LocaCode]	,[CreditNote]	,[DebitNote]	)
+			Values			(@DocNo	,@DocNo          	,@RefNo      	,@SuppCode	,@SuppName    	,@PNDate	,@NetAmount	,0                       
+						,'PCH'		,1		,@PType	,@PMode	,@UserName	,GetDate()	,@LocaCode	,0		,0)
+		End	
+
+	If @Advance<>0  Or  @PMode=1
+		Begin
+			NextReceipt:
+			
+			Set @NextIdx	= 0
+
+			UPDATE tb_System SET PMP=PMP+1 WHERE LocaCode=@LocaCode
+		
+			Select @NextIdx = Cast(PMP As Char(6)) FROM tb_System WHERE LocaCode = @LocaCode
+
+			Set @NextIdx = Replicate('0',6-Len(Rtrim(@NextIdx))) + Rtrim(@NextIdx)			
+
+			IF (@DFR Is Null)
+				Begin
+				Set  @ReceNo= Rtrim(@NextIdx)	
+				End 
+			ELSE
+				Begin
+				Set  @ReceNo= @DFR +  Rtrim(@NextIdx)	
+				End
+			
+
+			IF Exists(Select SerialNo From tb_Payment Where SerialNo=@ReceNo And LocaCode=@LocaCode  And [Id]='PMP')  Or Len(Rtrim(@NextIdx))<6	Goto NextReceipt
+
+			If @Advance<>0  --Update Advance Payment
+				Begin
+					Insert Into tb_Payment 	([SerialNo]	,[ReceiptNo]	,[RefNo]	,[CustCode]	,[CustName]	,[InvoiceDate]	,[Amount]	,[Balance]				
+								,[Id]		,[Status]		,[Type]		,[PMode]	,[UserId]	,[Tr_Date]	,[LocaCode])
+					Values			(@ReceNo	,@DocNo          	,@RefNo      	,@SuppCode	,@SuppName    	,@PNDate	,@Advance	,@NetAmount-@Advance
+								,'PMP'		,1		,@PType	,@AdvPMode	,@UserName	,GetDate()	,@LocaCode)
+				End
+			Else		 --Update Cash Payment
+				Begin
+					Insert Into tb_Payment 	([SerialNo]	,[ReceiptNo]	,[RefNo]	,[CustCode]	,[CustName]	,[InvoiceDate]	,[Amount]	,[Balance]				
+								,[Id]		,[Status]		,[Type]		,[PMode]	,[UserId]	,[Tr_Date]	,[LocaCode])
+					Values			(@ReceNo	,@DocNo          	,@RefNo      	,@SuppCode	,@SuppName    	,@PNDate	,@NetAmount	,@NetAmount
+								,'PMP'		,1		,@PType	,@PMode	,@UserName	,GetDate()	,@LocaCode)
+				End
+		End	
+	
+	Insert Into tb_DocNo ([DocNo],[tempNo],[Loca],[ID],[UserName]) Values (@DocNo,@SerialNo,@LocaCode,'PCH',@UserName)
+
+	End
+
+Delete From tb_TempPurch 	Where   LocaCode	= @LocaCode	And
+				SerialNo	= @SerialNo      And
+				ID		= 'PCH'
+
+
+SELECT @ReturnDocNo=@DocNo

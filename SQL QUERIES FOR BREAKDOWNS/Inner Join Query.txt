@@ -1,0 +1,7 @@
+SELECT productcode, supplier.SupplierName,location.locationname,InvDepartment.DepartmentName, InvCategory.CategoryName
+FROM InvProductMaster 
+INNER JOIN Supplier ON InvProductMaster.SupplierID=Supplier.SupplierID
+INNER JOIN InvDepartment ON InvProductMaster.DepartmentID=InvDepartment.InvDepartmentID
+INNER JOIN InvCategory ON InvProductMaster.CategoryID=InvCategory.InvCategoryID
+INNER JOIN InvProductStockMaster ON InvProductMaster.InvProductMasterID=InvProductStockMaster.ProductID
+INNER JOIN Location ON InvProductStockMaster.LocationID=Location.LocationID;

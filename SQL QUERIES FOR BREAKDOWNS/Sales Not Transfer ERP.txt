@@ -1,0 +1,22 @@
+
+-----------------------------------First clear all data for that day which is sales not transfer-------------------------------------------
+
+select * from transactiondet where cast (ZDate as date )='2023-03-26' and UnitNo='03' and ZNo='138' order by Receipt
+
+select * from transactiondet where cast (recdate as date )='2023-03-25'
+
+
+select * from TransactionDet where cast (ZDate as date )='2023-03-26' and ZNo='138' order by Receipt
+
+select MAX(TransactionDetID) from transactiondet where CAST(RecDate as date)='2023-03-26'
+
+select * from SYNC_LOG where TID='5'
+
+
+
+--------------------After manually insert the sales update the synclog in outlet to maximum id in transactiondet or paymentdet in outlet server----------------------
+
+transactiondet -TID 5
+paymentdet -TID 6.
+
+update SYNC_LOG set idx='893943' where TID='5'

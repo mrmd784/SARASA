@@ -1,0 +1,23 @@
+Insert Into  Openrowset('Sqloledb','192.168.1.102';'sa';'tstc123',Super_New.Dbo.tbPosTransact) 
+([ItemCode],[RefCode],[Descrip],[Cost],[Price],[Qty],[Amount],[IDI1],[IDis1],[IDiscount1],[IDI2],[IDis2],[IDiscount2],[IDI3],[IDis3],[IDiscount3],[IDI4],[IDis4],[IDiscount4],[IDI5],[IDis5],[IDiscount5],[Rate]
+,[SDStat],[SDNo],[SDID],[SDIs],[SDiscount],[Tax],[Nett],[Loca],[IId],[Receipt],[Salesman],[Cust],[Cashier],[StartTime],[EndTime],[RecDate],[BillType],[Unit],[UnitNo],[RowNo],[CDate],[Status],[PackSize],[ExpDate],[ItemType],[ConFact],[PackScale]
+,[UpdateBy],[RecallStat],[SaleType],[RecallNo],[Pcs],[Invoice],[PriceLevel],[KotType],[descripplus],[TaxAmount],[TaxStat],[TaxPcnt],[InvSerial],[CustName],[OrderBy],[OrderNo],[Zno],[Insertdate],[Promid]
+,[TableNo],[TerminalNo],[FLoca],[KotBotNo],[KotBotNoCnl],[RecallAdv],[Sinhala],[KotPrint],[RecallOrder],[Shift],[RefRowNo],[RefItemCode],[Pax])
+Select
+ [ItemCode],[RefCode],[Descrip],[Cost],[Price],[Qty],[Amount],[IDI1],[IDis1],[IDiscount1],[IDI2],[IDis2],[IDiscount2],[IDI3],[IDis3],[IDiscount3],[IDI4],[IDis4],[IDiscount4],[IDI5],[IDis5],[IDiscount5],[Rate]
+,[SDStat],[SDNo],[SDID],[SDIs],[SDiscount],[Tax],[Nett],[Loca],[IId],[Receipt],[Salesman],[Cust],[Cashier],[StartTime],[EndTime],[RecDate],[BillType],[Unit],[UnitNo],[RowNo],[CDate],[Status],[PackSize],[ExpDate],[ItemType],[ConFact],[PackScale]
+,[UpdateBy],[RecallStat],[SaleType],[RecallNo],[Pcs],[Invoice],[PriceLevel],[KotType],[descripplus],[TaxAmount],[TaxStat],[TaxPcnt],[InvSerial],[CustName],[OrderBy],[OrderNo],[Zno] ,GetDate(),[Promid]
+,[TableNo],[TerminalNo],[FLoca],[KotBotNo],[KotBotNoCnl],[RecallAdv],[Sinhala],[KotPrint],[RecallOrder],[Shift],[RefRowNo],[RefItemCode],[Pax]
+From tbPosTransactbackup  Where CAST(RecDate as date)='2023-09-22'
+
+select * from tbsystem
+select * from tbPostransactbackup where CAST(RecDate as date)='2023-09-22'
+select * from tbPospaymentbackup where CAST(sdate as date)='2023-09-22'
+
+Insert Into  Openrowset('Sqloledb','192.168.1.102';'sa';'tstc123',Super_New.Dbo.tbPosPayment) 
+([Receipt],[Loca],[UnitNo],[Sdate],[Id],[TypeId],[Amount],[Balance],[Cashier],[PaidAt],[BillType],[SerialNo],[PStatus],[Cust],[CustType],[BankId],[ChequeDate],[UpdateBy],[AdvanceNo],[Invoice],[InvSerial],[CustName],[Zno],[Insertdate]
+,[CurCode],[CurRate],[CurRateRel],[CurRateLkr],[CurIdDef],[RealAmount],[FLoca],[TableNo],[OrderNo],[Shift])
+Select 
+ [Receipt],[Loca],[UnitNo],[Sdate],[Id],[TypeId],[Amount],[Balance],[Cashier],[PaidAt],[BillType],[SerialNo],[PStatus],[Cust],[CustType],[BankId],[ChequeDate],[UpdateBy],[AdvanceNo],[Invoice],[InvSerial],[CustName],[Zno] ,GetDate()
+,[CurCode],[CurRate],[CurRateRel],[CurRateLkr],[CurIdDef],[RealAmount],[FLoca],[TableNo],[OrderNo],[Shift]
+From tbPospaymentbackup   Where CAST(sdate as date)='2023-09-22'

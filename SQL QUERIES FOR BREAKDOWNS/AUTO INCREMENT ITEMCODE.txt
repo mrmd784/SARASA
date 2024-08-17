@@ -1,0 +1,4 @@
+
+DECLARE @prefix NVARCHAR(10)='1001'
+select @prefix+ RIGHT('00000'+cast(ROW_NUMBER() OVER (ORDER BY (SELECT NULL))as NVARCHAR),5) as ItemCode,
+* from items where description like '%dress%'

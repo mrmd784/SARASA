@@ -1,0 +1,11 @@
+select tb_Stock.ItemCode,tb_Stock.LocaCode,Sum(Case [Id] When 
+'OPB' Then  (PackSize*Qty) When 'PCH' Then (PackSize*Qty) When 
+'PRN' Then -(PackSize*Qty) When 'INV' Then -(PackSize*Qty) When 
+'MKR' Then  (PackSize*Qty) When 'DMG' Then -(PackSize*Qty) When 
+'PRD' Then -(PackSize*Qty) When 'DSC' Then -(PackSize*Qty) When 
+'ADD' Then (PackSize*Qty) When 'TOG' Then -(PackSize*Qty) When 
+'AOD' Then -(PackSize*Qty) When 'IN1' Then (PackSize*Qty) When 
+'IN2' Then (PackSize*Qty) Else 0 End) As Stock into STKLOCA05 From tb_Stock 
+Where tb_Stock.LocaCode='05' And tb_Stock.Status=1  
+And tb_Stock.PDate <= '2024-03-31'  
+Group By tb_Stock.LocaCode,tb_Stock.ItemCode

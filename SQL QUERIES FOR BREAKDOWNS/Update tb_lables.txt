@@ -1,0 +1,3 @@
+select ItemCode,I.L2_Code,L2.l2_name from tb_Labels l
+inner join  tb_Item I on l.ItemCode=I.Item_Code
+inner join tb_Link2 L2 on I.L2_Code=L2.L2_Code

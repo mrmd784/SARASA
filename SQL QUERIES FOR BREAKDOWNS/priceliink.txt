@@ -1,0 +1,11 @@
+delete from tb_pricelink
+
+INSERT INTO [Easyway].[dbo].[tb_PriceLink]
+([ItemCode],[Loca],[Inv_Descrip],[Price],[EWholePrice],[PRetPrice],[PWholePrice],[PackSize]
+,[CostPrice],[CreateDate],[CreateBy],[DeleteDate],[DeleteBy],[Status])
+
+SELECT 
+[ItemCode],[Loca],[Inv_Descrip],[Price],[EWholePrice],[PRetPrice],[PWholePrice],[PackSize]
+,[CostPrice],[CreateDate],[CreateBy],[DeleteDate],[DeleteBy],[Status]
+FROM OpenRowset('Sqloledb','220.247.201.79';'sa';'tstc123',EasywayNew.Dbo.[tb_PriceLink])
+GO

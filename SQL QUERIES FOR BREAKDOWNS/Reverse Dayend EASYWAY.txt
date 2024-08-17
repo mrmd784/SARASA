@@ -1,0 +1,9 @@
+delete from tbPostransactSum where ZNo='573'
+delete from tbPospaymentSum where ZNo='573'
+
+delete from tb_InvDet where IDate='2023-04-28' and ID='inv'
+
+delete from tb_InvSumm where IDate='2023-04-28' and ID='inv'
+delete from tb_Stock where PDate='2023-04-28' and ID='inv'
+
+delete from tb_Payment where InvoiceDate='2023-04-28' and RefNo like '1-573%'

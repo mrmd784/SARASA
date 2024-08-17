@@ -1,0 +1,19 @@
+select count(*) from InvProductBatchNoExpiaryDetail bd
+inner join InvProductMaster pm on bd.ProductID=pm.InvProductMasterID
+where pm.SellingPrice<>bd.SellingPrice
+
+
+
+update bd
+set bd.SellingPrice=pm.SellingPrice
+ from InvProductBatchNoExpiaryDetail bd
+inner join InvProductMaster pm on bd.ProductID=pm.InvProductMasterID
+where pm.SellingPrice<>bd.SellingPrice
+
+
+
+update bd
+set bd.CostPrice=pm.CostPrice
+ from InvProductBatchNoExpiaryDetail bd
+inner join InvProductMaster pm on bd.ProductID=pm.InvProductMasterID
+where pm.CostPrice<>bd.CostPrice

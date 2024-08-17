@@ -1,0 +1,185 @@
+acctransactiondefinition
+accsalestype
+accledgeraccount
+
+
+select * from AccAccountReconciliationDetail
+select * from AccAccountReconciliationHeader
+select * from AccAccountReportTemplate
+select * from AccBankDepositDetail
+select * from AccBankDepositHeader
+select * from AccBankDirectTransferDetail
+select * from AccBankDirectTransferHeader
+select * from AccBillEntryDetail
+select * from AccBillEntryHeader
+select * from AccBudgetDetail
+select * from AccCardCommission
+select * from AccChequeCancelDetail
+select * from AccChequeCancelHeader
+select * from AccChequeDetail
+select * from AccChequeNoEntry
+select * from AccChequeReturnDetail
+select * from AccChequeReturnHeader
+select * from AccCreditNoteDetail
+select * from AccCreditNoteHeader
+select * from AccDebitNoteDetail
+select * from AccDebitNoteHeader
+select * from AccGlTransactionDetail
+select * from AccGlTransactionDetailI03000000000111
+select * from AccGlTransactionDetailTemp
+select * from AccGlTransactionHeader
+select * from AccJournalEntryDetail
+select * from AccJournalEntryHeader
+----select * from AccLedgerAccount where accledgeraccountid > '5'
+select * from AccLedgerSerialNumber
+select * from AccLoanEntryDetail
+select * from AccLoanEntryHeader
+select * from AccOpenningBalanceDetail
+select * from AccOpenningBalanceHeader
+select * from AccPaymentCancelDetail
+select * from AccPaymentCancelHeader
+select * from AccPaymentDetail
+select * from AccPaymentDetail20180410
+select * from AccPaymentHeader
+select * from AccPettyCashBillCancelDetail
+select * from AccPettyCashBillCancelHeader
+select * from AccPettyCashBillDetail
+select * from AccPettyCashBillHeader
+select * from AccPettyCashImprestDetail
+select * from AccPettyCashIOUDetail
+select * from AccPettyCashIOUHeader
+select * from AccPettyCashMaster
+select * from AccPettyCashPaymentDetail
+select * from AccPettyCashPaymentHeader
+select * from AccPettyCashPaymentProcessDetail
+select * from AccPettyCashPaymentProcessHeader
+select * from AccPettyCashReimbursement
+select * from AccPettyCashVoucherDetail
+select * from AccPettyCashVoucherHeader
+select * from AccSalesDownload
+select * from AccSalesDownloadSetting
+----select * from AccSalesType 
+select * from AccThirdPartyDownload
+----select * from AccTransactionDefinition
+select * from AccTransactionTemplateDetail
+select * from AccTransactionTemplateHeader
+select * from AccTransactionTypeDetail
+
+
+
+
+truncate table AccAccountReconciliationDetail
+delete from AccAccountReconciliationHeader---foreign key
+DBCC CHECKIDENT ('AccAccountReconciliationHeader', RESEED, 1)
+truncate table AccAccountReportTemplate
+truncate table AccBankDepositDetail
+
+delete from AccBankDepositHeader---foreign key
+DBCC CHECKIDENT ('AccBankDepositHeader', RESEED, 1)
+
+truncate table AccBankDirectTransferDetail
+
+delete from AccBankDirectTransferHeader---foreign key
+DBCC CHECKIDENT ('AccBankDirectTransferHeader', RESEED, 1)
+truncate table AccBillEntryDetail
+
+delete from AccBillEntryHeader---foreign key
+DBCC CHECKIDENT ('AccBillEntryHeader', RESEED, 1)
+
+truncate table AccBudgetDetail
+truncate table AccCardCommission
+truncate table AccChequeCancelDetail
+
+delete from AccChequeCancelHeader---foreign key
+DBCC CHECKIDENT ('AccChequeCancelHeader', RESEED, 1)
+
+truncate table AccChequeDetail
+truncate table AccChequeNoEntry
+truncate table AccChequeReturnDetail
+
+delete from AccChequeReturnHeader---foreign key
+DBCC CHECKIDENT ('AccChequeReturnHeader', RESEED, 1)
+truncate table AccCreditNoteDetail
+
+delete from AccCreditNoteHeader---foreign key
+DBCC CHECKIDENT ('AccCreditNoteHeader', RESEED, 1)
+
+truncate table AccDebitNoteDetail
+
+
+delete from AccDebitNoteHeader---foreign key
+DBCC CHECKIDENT ('AccDebitNoteHeader', RESEED, 1)
+
+truncate table AccGlTransactionDetail
+truncate table AccGlTransactionDetailI03000000000111
+truncate table AccGlTransactionDetailTemp
+
+delete from AccGlTransactionHeader---foreign key
+DBCC CHECKIDENT ('AccGlTransactionHeader', RESEED, 1)
+truncate table AccJournalEntryDetail
+
+delete from AccJournalEntryHeader---foreign key
+DBCC CHECKIDENT ('AccJournalEntryHeader', RESEED, 1)
+
+truncate table AccLedgerAccount 
+truncate table AccLedgerSerialNumber
+truncate table AccLoanEntryDetail
+
+
+delete from AccLoanEntryHeader---foreign key
+DBCC CHECKIDENT ('AccLoanEntryHeader', RESEED, 1)
+
+truncate table AccOpenningBalanceDetail
+
+
+delete from AccOpenningBalanceHeader---foreign key
+DBCC CHECKIDENT ('AccOpenningBalanceHeader', RESEED, 1)
+truncate table AccPaymentCancelDetail
+truncate table AccPaymentCancelHeader
+truncate table AccPaymentDetail
+truncate table AccPaymentDetail20180410
+truncate table AccPaymentHeader
+truncate table AccPettyCashBillCancelDetail
+
+delete from AccPettyCashBillCancelHeader---foreign key
+DBCC CHECKIDENT ('AccPettyCashBillCancelHeader', RESEED, 1)
+truncate table AccPettyCashBillDetail
+
+delete from AccPettyCashBillHeader---foreign key
+DBCC CHECKIDENT ('AccPettyCashBillHeader', RESEED, 1)
+truncate table AccPettyCashImprestDetail
+truncate table AccPettyCashIOUDetail
+
+delete from AccPettyCashIOUHeader---foreign key
+DBCC CHECKIDENT ('AccPettyCashIOUHeader', RESEED, 1)
+truncate table AccPettyCashMaster
+truncate table AccPettyCashPaymentDetail
+
+delete from AccPettyCashPaymentHeader---foreign key
+DBCC CHECKIDENT ('AccPettyCashPaymentHeader', RESEED, 1)
+truncate table AccPettyCashPaymentProcessDetail
+
+delete from AccPettyCashPaymentProcessHeader---foreign key
+DBCC CHECKIDENT ('AccPettyCashPaymentProcessHeader', RESEED, 1)
+truncate table AccPettyCashReimbursement
+truncate table AccPettyCashVoucherDetail
+
+delete from AccPettyCashVoucherHeader---foreign key
+DBCC CHECKIDENT ('AccPettyCashVoucherHeader', RESEED, 1)
+truncate table AccSalesDownload
+truncate table AccSalesDownloadSetting
+----select * AccSalesType 
+truncate table AccThirdPartyDownload
+----select * AccTransactionDefinition
+truncate table AccTransactionTemplateDetail
+
+delete from AccTransactionTemplateHeader---foreign key
+DBCC CHECKIDENT ('AccTransactionTemplateHeader', RESEED, 1)
+
+truncate table AccTransactionTypeDetail
+
+
+select * from AccLedgerAccount
+
+select * from AccSalesDownloadSetting
+

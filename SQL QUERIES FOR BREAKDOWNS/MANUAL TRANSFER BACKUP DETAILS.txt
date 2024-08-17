@@ -1,0 +1,40 @@
+
+--Step 1
+Create Table tb_Bkp (SDate Datetime,Loca Char(3),UnitNo Char(3),ZNo Int,Cash Money,Card Money,Other Money,
+BCash Money,BCard Money,BOther Money,Pcnt Decimal(12,2))
+
+--Step 2
+TRuncate Table tb_Bkp
+Go
+Insert Into tb_Bkp (SDate,Loca,UnitNo,ZNo,Cash,Card,Other,BCash,BCard,BOther,Pcnt)
+Select SDate,Loca,UnitNo,ZNo,Isnull(Sum(Case When TypeId=1 Then Amount Else 0 End),0)
+,Isnull(Sum(Case When TypeId=2 Then Amount When TypeId=3 Then Amount When TypeId=4 Then Amount When TypeId=7 Then Amount Else 0 End),0)
+,Isnull(Sum(Case When TypeId=1 Then 0 When TypeId=2 Then 0 When TypeId=3 Then 0 When TypeId=4 Then 0 When TypeId=7 Then 0 When TypeId>900 Then 0 Else Amount End),0)
+,0,0,0,60
+From tbPosPaymentSum Where SDate Between '2011-01-01' And '2014-12-31' And PStatus='S' GRoup By SDate,Loca,UnitNo,ZNo
+
+--Step 3
+
+Declare @SDate Datetime, @Loca Varchar(3), @UnitNo Varchar(3), @ZNo Int
+Declare @Cash Money ,@Card Money ,@Other Money ,  @Pcnt Decimal(12,2),@BCash Money
+
+DECLARE CurBackup CURSOR  FOR 	SELECT Loca,SDate,UnitNo,ZNo,Cash,Card,Other,Pcnt  From tb_Bkp Order By Loca,SDate,UnitNo,ZNo         
+
+OPEN CurBackup						
+FETCH NEXT FROM CurBackup  INTO @Loca,@SDate,@UnitNo,@ZNo,@Cash,@Card,@Other,@Pcnt
+WHILE @@FETCH_STATUS=0
+	BEGIN			
+		Set @BCash=@Cash*@Pcnt/100
+		Exec SP_UpdateTempBk @Loca,@SDate,@UnitNo,@ZNo,@Cash,@Card,@Other,@BCash,@Card,@Other,1
+		Exec SP_UploadBku @Loca,@SDate,@UnitNo,@ZNo,1
+
+		FETCH NEXT FROM CurBackup  INTO @Loca,@SDate,@UnitNo,@ZNo,@Cash,@Card,@Other,@Pcnt		
+	END
+CLOSE CurBackup
+DEALLOCATE CurBackup
+
+
+
+--Step 4
+
+Exec Sp_DayEndUpdateNew2

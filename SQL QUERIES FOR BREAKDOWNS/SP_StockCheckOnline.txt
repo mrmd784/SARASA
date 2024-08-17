@@ -1,0 +1,21 @@
+
+/****** Object:  StoredProcedure [dbo].[SP_StockChekOnline]    Script Date: 2023-03-21 5:05:47 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+create  PROCEDURE [dbo].[SP_StockChekOnline]
+@p_Loca 		CHAR(5),
+@p_ItemCode 	CHAR(25),
+@p_RefCode 		CHAR(25)=''
+AS
+
+if @p_RefCode='' or not(@p_RefCode like '%#%')
+begin
+	select Isnull(Sum(Stock),0) As Qty From vw_Stock Where itemcode=@p_ItemCode And LocaCode=@p_Loca
+end
+else
+begin
+	select Isnull(Sum(Stock),0) As Qty From Vw_StockCS Where itemcode=@p_ItemCode And LocaCode=@p_Loca and CSCode=@p_RefCode
+end

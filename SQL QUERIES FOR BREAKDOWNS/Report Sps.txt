@@ -1,0 +1,6 @@
+Subcategory wise sales report - SP_API_SUBCAT_WISE_SALES_RPT
+
+PosBillDetailReport - SP_API_POS_MANAGEMENT_RPT
+
+Goods Receive Note - Pnote
+
