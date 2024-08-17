@@ -1,0 +1,1 @@
+http://sms.textware.lk:5000/sms/send_sms.php?username=negombo_print_s215&password=9Nx$qGa@8ekN&src=MyMask&dst=MyPhoneNo&msg=MyMessage&dr=1
