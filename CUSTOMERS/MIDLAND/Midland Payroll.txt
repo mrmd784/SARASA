@@ -1,0 +1,22 @@
+select * from employee where empcode=1
+
+select * from deductionforemp where empcode=459
+
+select epf_employee,deduction1,deduction5,deduction9,salaryadvance
+,loan1,salarypaid_n,salarypaid from salarysummery 
+where empId=459 and monthofsalary='202306'
+
+select * from salarydeduction
+
+
+select * from loan_for_employee where empid=459
+
+select * from loanschedule where empid=459 
+and paid=1 and payigmonth='202306' and loanid=0
+
+delete from loanschedule where empid=459 
+and paid=1 and payigmonth='202306' and loanid=0
+
+select * from loan
+
+9050	568	459	3	10000.00	0.00	1	202306	0	0

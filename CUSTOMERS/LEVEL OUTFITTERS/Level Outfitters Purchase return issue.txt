@@ -1,0 +1,36 @@
+111510
+
+42625
+
+
+5696732.63
+
+
+select * from tb_payment where id = 'pmp' and custcode='010tr' and invoicedate='2023-01-16'
+
+select * from tb_purdet where id='prn' and serialno='01000658'
+
+delete from tb_payment where serialno='01002347' and custcode='010tr' and id = 'pmp'
+
+
+
+
+
+INSERT INTO [EasyWay].[dbo].[tb_Payment]
+           ([ReceiptNo],[CustCode],[CustName],[SerialNo],[RefNo],[InvoiceDate] ,[GrossAmount],[Discount],[IDiscount]
+           ,[Tax],[Amount],[Balance] ,[CreditNote],[DebitNote],[Id],[Status],[Type],[PMode],[ChqNo],[ChqDate],[Bank]
+           ,[AccNo],[LocaCode],[RepCode],[UserId],[Tr_Date],[IType],[PayStat],[Remark] ,[RetChq],[Upload],[UnitNo]
+           ,[AcBatch],[SetOffDocument])
+     VALUES
+           ('01003277','010Tr'	,'THE GARMENT'	,'01003277',''	,'2023-01-16 00:00:00.000'	,0.00	,0	,0	
+           ,0	,42625.00	,5654107.00	,NULL	,NULL	,'PMP'  	,1	,1	,3	,049393	,'2023-01-16 00:00:00.000'	,002
+           ,NULL ,01	,NULL	,'RIFAN'	,'2023-04-10 20:41:02.567'	,NULL	,NULL	,NULL	,0.00	,1	,NULL	
+           ,0, '')
+GO
+
+
+
+
+delete from tb_payment where serialno='01002368' and custcode='010tr' and id = 'pmp' and idx='264848'
+
+delete from tb_payment where invoicedate='2022-11-01' and custcode='010tr' and id = 'pmp'

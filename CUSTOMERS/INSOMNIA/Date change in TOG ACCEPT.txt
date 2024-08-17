@@ -1,0 +1,10 @@
+select * from tb_TogSumm where  SerialNo='01003750'
+
+select * from tb_TogSumm_Acc where RefNo='01003750'
+update tb_TogSumm_Acc set TDate='2023-12-31 00:00:00.000' where RefNo='01003750'
+
+select * from tb_TogDet_Acc where SerialNo='A41000024'
+update tb_TogDet_Acc set TDate='2023-12-31 00:00:00.000' where SerialNo='A41000024'
+
+select * from tb_stock where SerialNo='A41000024'
+update tb_stock set PDate='2023-12-31 00:00:00.000' where SerialNo='A41000024'
