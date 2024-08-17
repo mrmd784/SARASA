@@ -1,0 +1,25 @@
+select * from tb_LoyaltyDet where Sdate='2024-01-08' and Loca='02'
+select * from tbPospaymentSum where CAST(Sdate as date)='2024-01-08'
+select * from tb_purdet where cast(PDate as date)='2024-01-08' and LocaCode='03' and Status='1'
+select * from tb_PurSumm where CAST(PDate as date)='2024-01-08' and LocaCode='03' and Status='1'
+select * from tb_Payment where CAST(InvoiceDate as date)='2024-01-08' and LocaCode='03' and Status='1'
+
+update tb_purdet set Upload='0' where cast(PDate as date)='2024-01-08' and LocaCode='01' and Status='1'
+update tb_PurSumm set Upload='0' where CAST(PDate as date)='2024-01-08' and LocaCode='01' and Status='1'
+update tb_Payment set Upload='0' where CAST(InvoiceDate as date)='2024-01-08' and LocaCode='01' and Status='1'
+
+update tb_purdet set Upload='0' where cast(PDate as date)='2024-01-08' and LocaCode='02' and Status='1'
+update tb_PurSumm set Upload='0' where CAST(PDate as date)='2024-01-08' and LocaCode='02' and Status='1'
+update tb_Payment set Upload='0' where CAST(InvoiceDate as date)='2024-01-08' and LocaCode='02' and Status='1'
+
+update tb_LoyaltyDet set upload='0' where Sdate='2024-01-08' and Loca='03'
+update tbPospaymentSum set upload='0' where CAST(Sdate as date)='2024-01-08' and Loca='03'
+update tb_purdet set Upload='0' where cast(PDate as date)='2024-01-08' and LocaCode='03' and Status='1'
+update tb_PurSumm set Upload='0' where CAST(PDate as date)='2024-01-08' and LocaCode='03' and Status='1'
+update tb_Payment set Upload='0' where CAST(InvoiceDate as date)='2024-01-08' and LocaCode='03' and Status='1'
+----------------------------------------------------------------------------------------------------------------------
+select MAX(idx) from SYNC_LOG where TID='99'
+
+
+select * from SYNC_LOG
+update SYNC_LOG set IDX='23334' where TID='99'

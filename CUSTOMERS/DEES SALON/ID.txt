@@ -1,0 +1,4 @@
+DEES SALON STATIC IP 122.255.14.154
+
+username sarasa
+password erpsarasa123
