@@ -1,0 +1,7 @@
+INSERT INTO [dbo].[tb_SpecialPrices]
+([Item_Code],[CustCode],[PackSize],[Ret_Price],[Wh_Price],[ItemDescrip]
+,[LocaCode],[UserId],[CDate],[SpecialPriceListID],[ModifiedUser],[ModifiedDate]
+,[Persentage],[EachRet_Price],[IS_DELETE],[IS_DELETE_USER],[IS_DELETE_DATE])
+SELECT [Item Code],NULL,1,CAST(MRP AS NUMERIC(18,2)),CAST([Distributor price] AS NUMERIC(18,2)),[item description]
+,NULL,'EASYWAY',GETDATE(),14,'EASYWAY',GETDATE(),0,CAST([Laugfs] AS NUMERIC(18,2)),0,NULL,NULL
+FROM pricelist240509

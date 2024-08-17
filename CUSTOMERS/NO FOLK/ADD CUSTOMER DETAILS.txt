@@ -1,0 +1,14 @@
+USE [EASYWAYMT]
+GO
+
+INSERT INTO [dbo].[tb_Customer]
+([Cust_Code],[Cust_Name],[Contact_Name],[Contact_No],[Address1],[Address2],[Address3],[Country],[Phone1]
+,[Phone2],[Phone3],[Fax],[Email],[Web_Site],[CreditLimit],[CreditPeriod],[Route],[CDate],[State],[User_Id],[Balance]
+,[AccBalance],[PriceStat],[OverDraft],[Download],[Discount],[Type],[Intergration_Upload],[LoyaltyCustCode]
+,[EditDate],[salesRep],[PriceListID],[SaleType])
+
+SELECT
+[Cust_Code],[Cust_Name],[Contact_Name],''[Contact_No],[Address1],[Address2],[Address3],[Country],''[Phone1]
+,''[Phone2],''[Phone3],[Fax],''[Email],''[Web_Site],'0.00'[CreditLimit],0[CreditPeriod],[Route],getdate()[CDate],0[State],'EASYWAY'[User_Id],0[Balance]
+,0[AccBalance],1[PriceStat],0[OverDraft],'F'[Download],0[Discount],0[Type],0[Intergration_Upload],''[LoyaltyCustCode]
+,getdate()[EditDate],[salesRep],[PriceListID],[SaleType] FROM Customer

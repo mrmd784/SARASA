@@ -1,0 +1,22 @@
+customer wise paytype report
+
+thalawathugoda 24.05.07
+homagama 24.05.07 988004586
+colombo 05 23.12.04     any 528858224
+katugasthota 24.04.30   any 503531674
+Peradeniya  24.05.07
+Negombo 24.04.30        any 470737910
+Kaththankudi 24.05.07  backup
+moratuwa 23.12.04       any 123263165
+Galle 24.05.07
+Dehiwala 23.12.04       any 607986243
+Negombo 24.04.30        any 470737910
+
+
+
+
+
+
+
+
+
