@@ -1,0 +1,1 @@
+https://richcommunication.dialog.lk/api/sms/inline/send?q=7dbe9b098cdfbc9&destination=0760967718&message=test&from=BAYLEEE
