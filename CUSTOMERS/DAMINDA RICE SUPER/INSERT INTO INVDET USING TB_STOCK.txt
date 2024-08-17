@@ -1,0 +1,20 @@
+INSERT INTO [EASYWAY].[dbo].[tb_InvDet]
+([LnNo],[SerialNo],[LocaCode],[InvLocaCode],[IDate],[RefNo],[CustCode],[RepCode],[ItemCode],[ItemDescrip]
+,[Scale],[PackSize],[BatchNo],[Unit],[Cost2],[Cost],[Rate],[Qty],[GAmount],[Discount],[DiscP],[Tax]
+,[NetAmount],[DiscountForTot],[ConFact],[ConFactUnit],[TrDate],[ID],[UnitNo],[Status],[IType],[Rem1]
+,[Upload],[Intergration_Upload],[BarcodeSerial],[CSCode],[CSName],[IsSusVat],[RefSize],[RefQty]
+,[USDRate],[SinhalaDescrip],[Recalled],[Rem4],[Warrenty],[ItemRemark],[Vat],[VatP],[Nbt],[NbtP],[ItemRefCode]
+,[ERet_Price])
+
+select 
+'1',[SerialNo],'01','01',[Pdate],'',[SuppCode],[RepCode],[ItemCode],itm.Inv_Descrip,
+'Each','1','',itm.[EUnit],itd.[AvgCost],[Cost],[Rate],st.[Qty],Rate*st.Qty as Gamount,'0.00','0','0.00'
+,Rate*st.Qty as Netamount,'0','1','NOS',[CrDate],[ID],'1',[Status],[IType],''
+,'0','0',itm.[Ref_code],[CSCode],[CSName],'0','1.0000',st.[Qty]
+,'1.0000','','0','','','','0.00','0.00','0.00','0.0000',''
+,'0.0000'
+from tb_Stock st
+join tb_item itm on itm.item_code= st.ItemCode
+join tb_ItemDet itd on itd.Item_Code=st.ItemCode
+where SerialNo='C01000696'
+
