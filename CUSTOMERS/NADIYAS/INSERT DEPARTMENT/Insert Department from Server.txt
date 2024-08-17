@@ -1,0 +1,37 @@
+USE [SPOSDATA]
+GO
+
+truncate table [InvDepartment]
+
+SET Identity_Insert [InvDepartment] ON
+
+INSERT INTO [dbo].[InvDepartment]
+           ([InvDepartmentID]
+		   ,[DepartmentCode]
+           ,[DepartmentName]
+           ,[Remark]
+           ,[IsDelete]
+           ,[GroupOfCompanyID]
+           ,[CreatedUser]
+           ,[CreatedDate]
+           ,[ModifiedUser]
+           ,[ModifiedDate]
+           ,[DataTransfer])
+   
+   select 
+   [InvDepartmentID],
+   [DepartmentCode]
+           ,[DepartmentName]
+           ,[Remark]
+           ,[IsDelete]
+           ,[GroupOfCompanyID]
+           ,[CreatedUser]
+           ,[CreatedDate]
+           ,[ModifiedUser]
+           ,[ModifiedDate]
+           ,[DataTransfer]
+		   from openrowset('sqloledb','124.43.24.51,1533';'sa';'tstc123',ERP.dbo.InvDepartment)
+
+		   SET Identity_Insert [InvDepartment] Off
+
+

@@ -1,0 +1,12 @@
+SELECT SD.SalesmanID, SD.ProductCode as  Productcode, (SD.descrip) as ProductDescription,
+ SD.Price as UnitPrice, SD.Cost as CostPrice, (CASE SD.DocumentId WHEN '1' THEN SD.Qty WHEN '2' THEN -SD.Qty
+ ELSE 0 END) as Qty, (CASE SD.DocumentId  WHEN '1' THEN SD.nett WHEN '2' THEN -SD.nett ELSE 0 END) as Amount, (CASE SD.DocumentId
+ WHEN '1' THEN (IDiscount1+IDiscount2+IDiscount3+IDiscount4+IDiscount5) WHEN '2' THEN
+ -(+IDiscount1+IDiscount2+IDiscount3+IDiscount4+IDiscount5) ELSE 0 END) as Discount,
+  (CASE SD.DocumentId WHEN '6' THEN SD.SDiscount
+ ELSE 0 END) as SDiscount
+ , SD.LocationId as LocationCode, SD.Receipt as DocumentNo, SD.RecDate as SaleDate
+ FROM TransactionDet SD left outer JOIN (SELECT ProductId FROM PRODUCTMASTER GROUP BY  ProductId) PM ON SD.ProductId = PM.ProductId
+ WHERE SD.SaleTypeID = 1 AND SD.BillTypeID = 1 AND SD.Status = 1 AND SD.TransStatus = 1 AND SD.DocumentId in (1,2,6) AND   SD.LocationId ='7'
+AND CAST(SD.RECDATE as date) BETWEEN '2024-07-30' and '2024-07-30' and SalesmanID=1213
+--group by SD.SalesmanID, SD.ProductCode , SD.descrip,SD.Price, SD.Cost
