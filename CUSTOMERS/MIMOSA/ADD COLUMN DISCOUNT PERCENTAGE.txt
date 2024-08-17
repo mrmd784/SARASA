@@ -1,0 +1,12 @@
+
+
+if not exists (select * from syscolumns where id=object_id('tbPromotionMaster') and name='IsDiscountPercentage') 
+	begin
+		alter table tbPromotionMaster add IsDiscountPercentage bit NOT NULL DEFAULT (0)
+		print 'added'
+	end
+else
+	begin
+		print 'exists'
+	end
+go

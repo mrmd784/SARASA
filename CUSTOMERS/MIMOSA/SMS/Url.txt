@@ -1,0 +1,1 @@
+http://sms.textware.lk:5000/sms/send_sms.php?username=union_venture_m216&password=yrrcDIgNcy4y&src=MyMask&dst=MyPhoneNo&msg=MyMessage&dr=1

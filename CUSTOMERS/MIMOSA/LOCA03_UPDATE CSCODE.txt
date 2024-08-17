@@ -1,0 +1,41 @@
+Select * from tb_Useroperations
+
+select * from tb_stock where serialno='03000007' and itemcode in(select itemcode from STKCHNG)
+and cscode=''
+
+select * from tb_Stock where LocaCode='03' and ItemCode='MFT43TC261' order by pdate
+
+
+update tb_Stock set CSCode='MDR1DC1047#WTS\08' where LocaCode='03' and ItemCode='MDR1DC1047' and Idx='211767'
+update tb_Stock set CSCode='MDR22DC036#PNK\08' where LocaCode='03' and ItemCode='MDR22DC036' and Idx='211783'
+update tb_Stock set CSCode='MDR27CD140#MRN\08' where LocaCode='03' and ItemCode='MDR27CD140' and Idx='211784'
+update tb_Stock set CSCode='MWW36TC432#BLU\08' where LocaCode='03' and ItemCode='MWW36TC432' and Idx='211811'
+update tb_Stock set CSCode='MDR7DE7248#GRN-10' where LocaCode='03' and ItemCode='MDR7DE7248' and Idx='211790'
+update tb_Stock set CSCode='R086120284#BLU-S28' where LocaCode='03' and ItemCode='R086120284' and Idx='212140'
+update tb_Stock set CSCode='MIFTC0052#LBU\06' where LocaCode='03' and ItemCode='MIFTC0052' and Idx='211801'
+update tb_Stock set CSCode='R107110652#BKP-M' where LocaCode='03' and ItemCode='R107110652' and Idx='212282'
+update tb_Stock set CSCode='R116B20478#PNK-S' where LocaCode='03' and ItemCode='R116B20478' and Idx='212332'
+
+update tb_Stock set CSCode='MFT43TC261#MLP\10' where LocaCode='03' and ItemCode='MFT43TC261' and Idx='212548'
+R065110225#GRNS-S
+
+update tb_Stock set CSCode='R065110225#GRNS-S' where LocaCode='03' and ItemCode='R065110225' and Idx='212025'
+update tb_Stock set CSCode='R117D20599#WHT-S' where LocaCode='03' and ItemCode='R117D20599' and Idx='212357'
+update tb_Stock set CSCode='MFT43TC261#MLP\10' where LocaCode='03' and ItemCode='MFT43TC261' and Idx='211797'
+
+
+select * from tb_colour_size where itemcode='R065110225'
+
+
+
+
+
+ST24022020
+Select * from STKCHNG
+MDR1DC1047
+MDR22DC036
+MDR27CD140
+
+select * from tbpostransact where cast(recdate as date)='2020-02-22' and loca='03' and upload<>'T'
+
+select * from tbpostransact where loca='03' and upload='E' and itemcode='MDR22DC036'

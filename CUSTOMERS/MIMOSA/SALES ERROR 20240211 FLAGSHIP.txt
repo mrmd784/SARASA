@@ -1,0 +1,22 @@
+select * from tbpostransact where cast(recdate as date)='2024-02-11' and loca='18' and unitno='3' and receipt='00000093'
+select * from tbpospayment where cast(sdate as date)='2024-02-11' and loca='18' and unitno='3' and receipt='00000093'
+
+select * from tbpostransactsum where cast(recdate as date)='2024-02-11' and loca='18' and unitno='3' and receipt='00000093'
+select * from tbpospaymentsum where cast(sdate as date)='2024-02-11' and loca='18' and unitno='3' and receipt='00000093'
+select * from tb_invdet where cast(idate as date)='2024-02-11' and locacode='18' and refno='3-744-00000093'
+select * from tb_invsumm where cast(idate as date)='2024-02-11' and locacode='18' and refno='3-744-3-744-00000093'
+select * from tb_stock where pdate='2024-02-11' and locacode='18' and id='INV' and refno='3-744-00000093'
+select * from tb_payment where cast(invoicedate as date)='2024-02-11' and locacode='18' and refno='3-744-3-744-00000093'
+
+update tbpostransact set upload='F' where cast(recdate as date)='2024-02-11' and loca='18' and unitno='3' and receipt='00000093'
+update tbpospayment set upload='F' where cast(sdate as date)='2024-02-11' and loca='18' and unitno='3' and receipt='00000093'
+
+
+--delete from tbpostransactsum where cast(recdate as date)='2024-02-11' and loca='18' and unitno='3' and receipt='00000093'
+--delete from tbpospaymentsum where cast(sdate as date)='2024-02-11' and loca='18' and unitno='3' and receipt='00000093'
+--delete from tb_invdet where cast(idate as date)='2024-02-11' and locacode='18' and refno='3-744-00000093'
+--delete from tb_invsumm where cast(idate as date)='2024-02-11' and locacode='18' and refno='3-744-3-744-00000093'
+--delete from tb_stock where pdate='2024-02-11' and locacode='18' and id='INV' and refno='3-744-00000093'
+--delete from tb_payment where cast(invoicedate as date)='2024-02-11' and locacode='18' and refno='3-744-3-744-00000093'
+
+
