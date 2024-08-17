@@ -1,0 +1,27 @@
+select * from employee where empcode='13' and loca='9'
+
+select * from loan_for_employee where empid='816'
+select paidinstaltment from loan_for_employee where empid='816'
+
+
+update loan_for_employee set paidinstaltment=2 where empid='816'
+
+select * from loansettlement where empid='816'
+
+select * from loansummery where empid='816'
+update loansummery set PID='1' where empid='816'
+
+select * from loanschedulebalance where empid='816'
+
+
+select * from loanschedule where loan_for_emplyeeid='857' 
+delete from loanschedule where loan_for_emplyeeid='857' and payigmonth='202308'
+
+select * from loanschedule where loan_for_emplyeeid='857' and payigmonth='202307'
+update loanschedule set installmentnumber=2,sid=1,loanid=64 where loan_for_emplyeeid='857' and payigmonth='202307'
+
+select * from loan_repayment where loan_for_employee_id='857'
+
+
+
+select * from location

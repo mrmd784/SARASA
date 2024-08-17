@@ -1,0 +1,8 @@
+SELECT ItemCode, tb_item.Cat_Code
+FROM tbPostransact 
+INNER JOIN tb_Item ON tbpostransact.ItemCode=tb_Item.Item_Code
+where loca='01' and zno='983' and UnitNo=3 and Upload is null
+
+UPDATE C  SET  C.RefItemCode=D.Cat_Code FROM 
+tb_Item AS  D  JOIN tbpostransact AS C ON D.ITEM_CODE=C.ITEMCODE 
+where loca='01' and zno='983' and UnitNo=3 and Upload is null

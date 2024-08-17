@@ -1,0 +1,23 @@
+select * into loca02_1 from tb_ItemDet where Loca_Code='02'
+
+select I.Item_Code,I.PRet_Price,L.PRet_Price,I.ERet_Price,L.ERet_Price,I.Cost_Price,L.Cost_Price,I.AvgCost,L.AvgCost from tb_ItemDet I
+join loca02_1 L ON I.Item_Code=L.Item_Code where I.Loca_Code='02'
+and I.ERet_Price<>L.ERet_Price
+
+
+select I.Item_Code,I.PRet_Price,L.PRet_Price,I.ERet_Price,L.ERet_Price,I.Cost_Price,L.Cost_Price,I.AvgCost,L.AvgCost from tb_ItemDet I
+join loca02 L ON I.Item_Code=L.Item_Code where I.Loca_Code='02'
+and I.ERet_Price<>L.ERet_Price
+
+UPDATE L SET L.PRet_Price=I.PRet_Price,L.ERet_Price=I.PRet_Price,L.Cost_Price=I.Cost_Price,L.AvgCost=I.AvgCost
+FROM tb_ItemDet AS I JOIN loca02 AS L ON I.Item_Code=L.Item_Code
+WHERE I.Loca_Code='01' and I.ERet_Price<>L.ERet_Price
+
+
+BEGIN TRAN
+UPDATE I SET I.PRet_Price=L.PRet_Price,I.ERet_Price=L.ERet_Price,I.Cost_Price=L.Cost_Price,I.AvgCost=L.AvgCost
+FROM loca02 AS L JOIN tb_ItemDet AS I ON L.Item_Code=I.Item_Code
+WHERE I.Loca_Code='02' and I.ERet_Price<>L.ERet_Price
+
+COMMIT
+ROLLBACK

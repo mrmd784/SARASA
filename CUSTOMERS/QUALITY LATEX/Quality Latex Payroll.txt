@@ -1,0 +1,22 @@
+select * from Employee where EmpCode='803' or EmpCode='481'
+
+select * from Loan_For_Employee where EmpID=1818 and id=658
+
+select * from Loan_Repayment where EmpID=1818
+
+select * from LoanSchedule where EmpID=1818 and LoanID=148 and Loan_For_EmplyeeID=658 and id=20652
+
+select * from LoanScheduleBalance where Loan_For_EmplyeeID=658
+
+select * from LoanShadualTemp  where ID=90197
+
+update LoanSchedule set InstallmentValue=5000.00 where EmpID=1818 and LoanID=148 and Loan_For_EmplyeeID=658 and id=20652
+
+update Loan_For_Employee set Paid_Amt=25000.00,Balance_Amt=0.00 where EmpID=1818 and id=658
+
+update Loan_Repayment set PaidAmount=25000.00,BalanceAmt=0.00 where EmpID=1818
+
+update LoanShadualTemp set InstallmentValue=5000.00,LoanBalance=0.00,LoanOutStand=0.00   where ID=90197
+
+
+select * from LoanSettlement

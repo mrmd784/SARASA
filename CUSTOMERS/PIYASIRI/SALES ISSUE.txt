@@ -1,0 +1,32 @@
+select * from tbpostransact where RecDate between '2024-02-05' and '2024-02-07'
+select * from tbPospayment where sdate between '2024-02-05' and '2024-02-07'
+
+delete from tbpostransact where RecDate between '2024-02-05' and '2024-02-07'
+delete from tbPospayment where sdate between '2024-02-05' and '2024-02-07'
+
+
+
+select * from tbpostransactsum where RecDate between '2024-02-05' and '2024-02-06'
+select * from tbPospaymentsum where sdate between '2024-02-05' and '2024-02-06'
+select * from tb_InvDet where IDate between '2024-02-05' and '2024-02-06' and ID='INV'
+select * from tb_InvSumm where IDate between '2024-02-05' and '2024-02-06' and ID='INV'
+select * from tb_stock where pdate between '2024-02-05' and '2024-02-06' and ID='INV'
+select * from tb_Payment where InvoiceDate between '2024-02-05' and '2024-02-06' and RefNo like '1-4166%'
+select * from tb_Payment where InvoiceDate between '2024-02-05' and '2024-02-06' and RefNo like '1-4167%'
+
+
+delete from tbpostransactsum where RecDate between '2024-02-05' and '2024-02-06'
+delete from tbPospaymentsum where sdate between '2024-02-05' and '2024-02-06'
+delete from tb_InvDet where IDate between '2024-02-05' and '2024-02-06' and ID='INV'
+delete from tb_InvSumm where IDate between '2024-02-05' and '2024-02-06' and ID='INV'
+delete from tb_stock where pdate between '2024-02-05' and '2024-02-06' and ID='INV'
+delete from tb_Payment where InvoiceDate between '2024-02-05' and '2024-02-06' and RefNo like '1-4166%'
+delete from tb_Payment where InvoiceDate between '2024-02-05' and '2024-02-06' and RefNo like '1-4167%'
+
+
+
+
+
+select * from tb_InvDet where IDate='2024-02-06' 
+
+select * from 

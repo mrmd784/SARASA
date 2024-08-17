@@ -1,0 +1,37 @@
+select * from tbPostransactSum where Loca='02'
+select * from tbPospaymentSum where Loca='02'
+select * from tb_InvDet where  invLocaCode='02' and ID='inv' and SerialNo like 'P%'
+select * from tb_InvSumm where LocaCode='02' and ID='inv' and SerialNo like 'P%'
+select * from tb_Stock where LocaCode='02' and ID='inv'
+select * from tb_Payment where LocaCode='02' and ID not in ('PMP','PCH')
+--select distinct id from tb_Payment where LocaCode='02'
+
+
+select * from tbpostransact where Loca='02' 
+select * from tbpospayment where Loca='02' 
+
+--delete from tbPostransactSum where Loca='02'
+--delete from tbPospaymentSum where Loca='02'
+--delete from tb_InvDet where  invLocaCode='02' and ID='inv' and SerialNo like 'P%'
+--delete from tb_InvSumm where LocaCode='02' and ID='inv' and SerialNo like 'P%'
+--delete from tb_Stock where LocaCode='02' and ID='inv'
+--delete from tb_Payment where LocaCode='02' and ID not in ('PMP','PCH')
+
+
+update tbPostransact set Upload='F',Serial='' where Loca='02'
+update tbPospayment set Upload='F',Serial='' where Loca='02'
+
+
+select * from tb_Stock where LocaCode='02' and ID<>'inv'
+select * from tb_Payment where LocaCode='02' and ID  in ('PMP','PCH')
+
+update tb_Stock set SerialNo='02000001' where LocaCode='02' and ID<>'inv'
+update tb_Payment set ReceiptNo='02000001' ,SerialNo='02000001' where LocaCode='02' and ID  in ('PMP','PCH')
+
+select * from tb_PurDet where LocaCode='02'
+select * from tb_PurSumm where LocaCode='02'
+
+update tb_PurDet set SerialNo='02000001' where LocaCode='02'
+update tb_PurSumm set SerialNo='02000001' where LocaCode='02'
+
+update tb_System set PNO=1,PMP=1 where LocaCode='02'
