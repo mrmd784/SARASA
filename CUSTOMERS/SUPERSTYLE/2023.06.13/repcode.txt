@@ -1,0 +1,1 @@
+select salesman from tbPostransact where Salesman  not in( select Rep_Code from tb_SalesRep) --where LocaCode='03') 
