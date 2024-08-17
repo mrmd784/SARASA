@@ -1,0 +1,18 @@
+select * from tbPostransact where cast(recdate as date)='2024-01-03' and loca='02'
+select * from tbPospayment where cast(sdate as date)='2024-01-03' and  loca='02'
+
+
+select * from tbPostransactsum where cast(recdate as date)='2024-01-03' and loca='02'
+select * from tbPospaymentsum where cast(sdate as date)='2024-01-03' and  loca='02'
+select * from tb_invdet where LocaCode='02' and idate ='2024-01-03' and id='INV' and RefNo like '1-78%'
+select * from tb_InvSumm  where LocaCode='02' and idate ='2024-01-03' and id='INV' and RefNo like '1-78%'
+select * from tb_stock where pdate ='2024-01-03' and locacode='02' and id='INV'
+select * from tb_payment where invoicedate='2024-01-03' and locacode='02' and refno like '1-78%'
+
+
+delete from tbPostransactsum where cast(recdate as date)='2024-01-03' and loca='02'
+delete from tbPospaymentsum where cast(sdate as date)='2024-01-03' and  loca='02'
+delete from tb_invdet where LocaCode='02' and idate ='2024-01-03' and id='INV' and RefNo like '1-78%'
+delete from tb_InvSumm  where LocaCode='02' and idate ='2024-01-03' and id='INV' and RefNo like '1-78%'
+delete from tb_stock where pdate ='2024-01-03' and locacode='02' and id='INV'
+delete from tb_payment where invoicedate='2024-01-03' and locacode='02' and refno like '1-78%'
