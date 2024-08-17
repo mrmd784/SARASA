@@ -1,0 +1,20 @@
+add itemremark column to [spInitBillCopy]
+
+ADD this to spreloaditem
+
+---17 Itemdetails for Jasper
+		
+--Delete From tbItemDetails
+
+Insert Into tbItemDetails (ItemCode,CategoryName,SubCategoryName,BrandName,Warrenty)
+Select I.Item_Code,C.cat_Name,sc.subcat_name,L1.L1_Name,L2.L2_Name
+From Openrowset('Sqloledb','localhost';'sa';'tstc123',easyway.dbo.tb_item) As I Join 
+Openrowset('Sqloledb','localhost';'sa';'tstc123',easyway.Dbo.tb_category) As C ON I.Cat_Code = C.Cat_Code JOIN
+Openrowset('Sqloledb','localhost';'sa';'tstc123',easyway.Dbo.tb_subcategory) As SC ON I.SubCat_Code = SC.SubCat_Code JOIN
+Openrowset('Sqloledb','localhost';'sa';'tstc123',easyway.Dbo.tb_link1) As L1 ON I.L1_code = L1.L1_Code JOIN
+Openrowset('Sqloledb','localhost';'sa';'tstc123',easyway.Dbo.tb_link2) As L2 ON I.L2_code = L2.L2_Code 
+where I.item_code not in (select itemcode from tbItemDetails)
+
+
+
+
