@@ -1,0 +1,37 @@
+ZUZI
+
+invpromotiondetailproductdis
+
+select * from ebony
+
+select SUBSTRING([Product Code],1,13) from ebony
+
+
+select SUBSTRING([Product Code],1,13)as productcode into ebonyproduct from ebony
+
+
+select * from ebonyproduct
+select * from invproductmaster
+
+select * from InvSubCategory2  356
+
+select * from InvProductMaster pm 
+inner join ebonyproduct ep on pm.ProductCode=ep.productcode
+
+select distinct SubCategory2ID from InvProductMaster pm 
+inner join ebonyproduct ep on pm.ProductCode=ep.productcode
+
+select pm.ProductCode,pm.ProductName,SubCategory2ID into Ebonypromitembak0331 from InvProductMaster pm 
+inner join ebonyproduct ep on pm.ProductCode=ep.productcode
+
+
+begin tran
+UPDATE PM  SET  PM.subcategory2id='356' FROM  ebonyproduct  AS  EP  
+JOIN InvProductMaster AS PM ON EP.productcode=PM.ProductCode
+
+commit
+
+rollback
+
+
+

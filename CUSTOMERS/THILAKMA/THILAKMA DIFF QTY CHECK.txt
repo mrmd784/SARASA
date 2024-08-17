@@ -1,0 +1,65 @@
+WITH InvSalesDaily AS (
+    SELECT 
+        CAST(DocumentDate AS DATE) AS Date,
+        SUM(CASE 
+            WHEN DocumentID = 1 OR DocumentID = 3 THEN Qty
+            WHEN DocumentID = 2 OR DocumentID = 4 THEN -Qty 
+            ELSE 0 
+        END) AS NetQty
+    FROM InvSales
+    WHERE LocationID = 7 AND CAST(DocumentDate AS DATE) BETWEEN '2024-06-08' AND '2024-06-08'
+    GROUP BY 
+        CAST(DocumentDate AS DATE)
+),
+
+TransactionDetDaily AS (
+    SELECT 
+        CAST(ZDate AS DATE) AS Date,
+        SUM(CASE 
+            WHEN DocumentID = 1 OR DocumentID = 3 THEN Qty
+            WHEN DocumentID = 2 OR DocumentID = 4 THEN -Qty 
+            ELSE 0 
+        END) AS NetQty
+    FROM TransactionDet
+    WHERE LocationID = 7 and CAST(ZDate AS DATE) BETWEEN '2024-01-01' AND '2024-07-15'
+    GROUP BY 
+        CAST(ZDate AS DATE)
+)
+
+SELECT 
+    COALESCE(i.Date, t.Date) AS Date,
+    i.NetQty AS InvSalesNetQty,
+    t.NetQty AS TransactionDetNetQty,
+    CASE 
+        WHEN i.NetQty != t.NetQty THEN 'Different'
+        ELSE 'Same'
+    END AS QtyComparison
+FROM 
+    InvSalesDaily i
+FULL OUTER JOIN 
+    TransactionDetDaily t
+ON 
+    i.Date = t.Date
+
+ORDER BY 
+    Date;
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT SUM(CASE WHEN DocumentID = 1 OR DocumentID = 3 THEN Qty
+WHEN DocumentID = 2 OR DocumentID = 4 THEN Qty ELSE 0 END) FROM InvSales
+WHERE LocationID =1 AND CAST(DocumentDate AS DATE) BETWEEN '2024-01-01' AND '2024-07-30'
+--AND ProductID<>'196909'
+SELECT SUM(CASE WHEN DocumentID = 1 OR DocumentID = 3 THEN Qty
+WHEN DocumentID = 2 OR DocumentID = 4 THEN -Qty ELSE 0 END) FROM TransactionDet
+WHERE LocationID =1 AND CAST(ZDate AS DATE) BETWEEN '2024-01-01' AND '2024-07-30'
+and Status='1' and Descrip<>'VOUCHER'

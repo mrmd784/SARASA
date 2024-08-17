@@ -1,0 +1,64 @@
+	  )
+select pm.InvProductMasterID,
+       bd.LocationID 
+      ,[ProductCode]
+      ,pm.[BarCode]
+      ,pm.[BarCode2]
+      ,bd.[BarCode]
+      ,bd.BatchNo
+      ,bd.ExpiryDate
+      ,''
+      ,bd.BalanceQty
+      ,isnull(pm.ReferenceCode1,0)
+      ,isnull(pm.ReferenceCode2,0)
+	  ,isnull(pm.[ReferenceCode3],0)
+      ,pm.ProductName
+      ,Case When pm.isnonexchangeable=1 Then '#'+pm.NameOnInvoice Else pm.NameOnInvoice End
+      ,pm.DepartmentID
+      ,pm.CategoryID
+      ,pm.SubCategoryID
+      ,pm.SubCategory2ID
+      ,pm.SupplierID
+      ,pm.WholeSalePrice SearchColumn
+      ,pm.UnitOfMeasureID UMID
+      ,0 UMNAME
+      ,1 CF
+      ,0 PackSize
+      ,bd.CostPrice
+      ,bd.CostPrice AverageCost
+      ,sl.PriceLevelPrice SellingPrice
+      ,sl.PriceLevelPrice WholeSalePrice
+      ,pm.MinimumPrice MinimumPrice
+      ,pm.FixedDiscount FixedDiscount
+      ,pm.MaximumDiscount MaximumDiscount
+      ,pm.MaximumPrice MaximumPrice
+      ,pm.FixedDiscountPercentage FixedDiscountPercentage
+      ,pm.MaximumDiscountPercentage MaximumDiscountPercentage
+      ,pm.IsActive
+      ,IIF(pm.IsBatch=1 or pm.IsConsignment=1,1,0)
+      ,pm.IsPromotion
+      ,pm.IsFreeIssue
+      ,pm.IsExpiry
+      ,pm.IsCountable
+      ,pm.IsTax
+      ,pm.IsSerial
+	  ,pm.UnitOfMeasureID
+	  ,PM.ModifiedDate
+	  ,NULL
+	  ,0
+	  ,pm.IsNonDiscount
+from Openrowset('Sqloledb','SERVER';'sa';'tstc123'
+,ERP.DBO.InvPriceLevel) s
+inner join 
+Openrowset('Sqloledb','SERVER';'sa';'tstc123'
+,ERP.DBO.InvPriceLevelList) sl
+on s.InvPriceLevelID=sl.InvPriceLevelID and sl.IsDelete=0
+inner join 
+Openrowset('Sqloledb','SERVER';'sa';'tstc123'
+,ERP.DBO.InvProductMaster) pm
+on  pm.InvProductMasterID =sl.ProductID
+inner join 
+Openrowset('Sqloledb','SERVER';'sa';'tstc123'
+,ERP.DBO.InvProductBatchNoExpiaryDetail) bd
+on bd.ProductID=pm.InvProductMasterID and bd.IsDelete=0 
+and bd.LocationID=1AND pm.IsColorSize=0

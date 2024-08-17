@@ -1,0 +1,16 @@
+[SP_FREE_ITEM_ISSUE_RPT] 
+
+ELSE IF (@ID = 4)
+		BEGIN
+			SELECT tb_InvDet.ItemCode, tb_InvDet.ItemDescrip, tb_InvDet.PackSize, tb_InvDet.Rate, tb_InvDet.Qty, tb_InvDet.GAmount  
+			,tb_InvDet.ID, tb_InvDet.Discount,CAST(tb_itemdet.ERet_Price* tb_InvDet.Qty AS Numeric(18,2)) AS NetAmount, tb_InvDet.DiscountForTot, tb_Item.SubCat_Code  
+			,tb_SubCategory.SubCat_Name FROM  (((tb_InvDet INNER JOIN tb_Item ON tb_InvDet.ItemCode = tb_Item.Item_Code)  
+			INNER JOIN tb_SubCategory ON   tb_Item.SubCat_Code = tb_SubCategory.SubCat_Code)
+			INNER JOIN tb_ItemDet ON   tb_Itemdet.Item_Code = tb_InvDet.ItemCode and tb_Itemdet.Loca_Code=tb_InvDet.LocaCode)
+			WHERE (tb_InvDet.ID = 'INV' OR  tb_InvDet.ID = 'MKR') AND tb_InvDet.Status =1 AND tb_InvDet.ItemCode In  
+			(SELECT Code FROM tb_TempSELECT WHERE UserName=@USERNAME AND [Id]='OIT' AND LocaCode=@LOCA)  
+			AND tb_InvDet.IDate BETWEEN @DATE1 AND @DATE2  AND tb_InvDet.LocaCode=@LOCA  
+			AND tb_InvDet.ItemCode In (SELECT ItemCode FROM tb_InvDet WHERE (tb_InvDet.[ID]='INV' Or tb_InvDet.[ID]='MKR') AND tb_InvDet.Status =1 AND tb_InvDet.IDate BETWEEN @DATE1  
+			AND @DATE2  AND tb_InvDet.LocaCode=@LOCA AND (tb_InvDet.Rate=0 OR tb_InvDet.NetAmount = 0) ) and tb_InvDet.ItemDescrip like '(FREE)%'
+			ORDER BY tb_Item.SubCat_Code,tb_InvDet.ItemCode ASC,tb_InvDet.IDate ASC
+		END

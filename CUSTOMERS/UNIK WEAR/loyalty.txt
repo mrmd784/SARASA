@@ -1,0 +1,9 @@
+INSERT INTO Openrowset('sqloledb','124.43.76.179';'sa';'tstc123',easyway.dbo.tb_LoyaltyDet)
+([CustCode],[CustName],[CustType],[Sdate],[STime],[Loca],[UnitNo],[Zno],[Receipt]
+,[Cashier],[Iid],[ClaimType],[PurcType],[Total],[Amount],[Rate],[Points],[TrnsDate],[Remark]
+,[Download],[Upload],[ReferenceNo],[InvoiceNo],[BFBalance])
+select 
+[CustCode],[CustName],[CustType],[Sdate],[STime],[Loca],[UnitNo],[Zno],[Receipt]
+,[Cashier],[Iid],[ClaimType],[PurcType],[Total],[Amount],[Rate],[Points],[TrnsDate],[Remark]
+,[Download],[Upload],[ReferenceNo],[InvoiceNo],[BFBalance]
+from tb_loyaltydet

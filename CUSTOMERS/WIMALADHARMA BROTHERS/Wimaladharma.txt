@@ -1,0 +1,30 @@
+select item_code,loca_Code,Eret_Price,PRet_Price,Cost_Price into itemloca02 from tb_ItemDet where Loca_Code='02'
+
+drop table itemloca02
+
+select * from tb_ItemDet itd join itemloca01 i1 on itd.Item_Code=i1.item_code
+where itd.Loca_Code='02'
+
+update itd set itd.Cost_Price=i1.cost_price
+,itd.ERet_Price=i1.ERet_Price
+,itd.PRet_Price=i1.PRet_Price from itemloca01 as i1 
+join tb_ItemDet as itd on i1.item_code=itd.Item_Code
+where itd.Loca_Code='02'
+
+
+
+select * from itemloca01 i1 join itemloca02 i2 on i1.item_code=i2.item_code
+where i1.Eret_price<>i2.ERet_Price --and i1.cost_price<>i2.Cost_Price
+
+
+
+select * from itemloca01 i1 join itemloca02 i2 on i1.item_code=i2.item_code
+where i1.cost_price<>i2.Cost_Price
+
+select * from itemloca01 i1 join itemloca02 i2 on i1.item_code=i2.item_code
+where i1.PRet_price<>i2.PRet_Price
+
+
+select * from tb_PriceChange where ItemCode='00000'
+
+update tb_PriceChange set NewAvgCost='0.00' where ItemCode='00000'
