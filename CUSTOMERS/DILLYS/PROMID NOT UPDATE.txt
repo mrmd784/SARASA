@@ -1,0 +1,78 @@
+select * from tbpostransact where loca='17' and promid<>0 and unitno<>'4'
+select distinct promid from tbpostransactsum where loca='17' and promid<>0 and unitno<>'4'
+
+select * from tbPostransact where SDIs='15%' and Loca='17' and descrip like 'PROMO%'
+select * from tbPostransactsum where SDIs='15%' and Loca='17' and descrip like 'PROMO%'
+
+update tbPostransact set PromId='63' where SDIs='15%' and Loca='17' and descrip like 'PROMO%'
+update tbPostransactsum set PromId='63' where SDIs='15%' and Loca='17' and descrip like 'PROMO%'
+
+select * from tbPostransact where Loca='17' and IId='006' and 
+descrip like 'Promo%' and ZNo in('907','908','1075','1076')
+
+select * from tbPostransactsum where Loca='17' and IId='006' and 
+descrip like 'Promo%' and ZNo in('907','908','1075','1076')
+
+update tbPostransact set PromId='61' where Loca='17' and IId='006' and 
+descrip like 'Promo%' and ZNo in('907','908','1075','1076')
+
+update tbPostransactsum set PromId='61' where Loca='17' and IId='006' and 
+descrip like 'Promo%' and ZNo in('907','908','1075','1076')
+
+
+select * from tbpostransact where promid='55' and loca='17'
+
+select * from tbPostransact where IDiscount1 in ('388.5','337.5','777') and IDI1='6'
+and RecDate >'2024-02-08' and loca='17' and unitno='2'
+ and zno in('1038','1039','1041','1044','1045','1048','1050','1051','1062','1070')
+ 
+ update tbPostransact set promid='55' where IDiscount1 in ('388.5','337.5','777') and IDI1='6'
+and RecDate >'2024-02-08' and loca='17' and unitno='2'
+ and zno in('1038','1039','1041','1044','1045','1048','1050','1051','1062','1070')
+ 
+
+select * from tbPostransactsum where IDiscount1 in ('388.5','337.5','777') and IDI1='6'
+and RecDate >'2024-02-08' and loca='17' and unitno='2'
+and zno in('1038','1039','1041','1044','1045','1048','1050','1051','1062','1070')
+
+update tbpostransactsum set PromiD='55' where IDiscount1 in ('388.5','337.5','777') and IDI1='6'
+and RecDate >'2024-02-08' and loca='17' and unitno='2'
+and zno in('1038','1039','1041','1044','1045','1048','1050','1051','1062','1070')
+
+select * from tbpostransact where promid='51' and loca='17'
+
+select * from prom51
+
+select * from tbpostransactsum t
+join prom51 p on t.itemcode=p.itemcode and t.refcode=p.refcode
+and t.zno=p.zno and t.Idis1=p.Idis1 and t.receipt=p.receipt
+and t.rowno=p.rowno
+where t.unitno<>4
+
+begin tran
+update t set promid='51' from prom51 as p join tbpostransactsum as t on p.itemcode=t.itemcode
+and p.zno=t.zno and p.Idis1=t.Idis1 and p.receipt=t.receipt
+and p.rowno=t.rowno where t.unitno<>4
+commit 
+rollback
+
+
+
+select * from promAll17
+
+select * from tbpostransactsum t
+join promAll17 p on t.itemcode=p.itemcode and t.refcode=p.refcode
+and t.zno=p.zno and t.Idis1=p.Idis1 and t.receipt=p.receipt
+and t.rowno=p.rowno
+where t.unitno<>4
+
+begin tran
+update t set t.promid=p.PromId from promAll17 as p join tbpostransactsum as t on p.itemcode=t.itemcode
+and p.zno=t.zno and p.Idis1=t.Idis1 and p.receipt=t.receipt
+and p.rowno=t.rowno where t.unitno<>4
+commit 
+rollback
+
+
+
+select * from tbpostransact where loca='46' and promid<>0

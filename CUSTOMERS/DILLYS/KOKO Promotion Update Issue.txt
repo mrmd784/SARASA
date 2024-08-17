@@ -1,0 +1,33 @@
+select distinct loca from tbpostransactsum where promid='436'
+
+select distinct loca from tbpostransact where promid='436'
+
+select * from tbpostransactsum where loca='19' and receipt='00000185' and cast(recdate as date)='2023-11-24'
+
+select * from tbpostransact where loca='19' and recdate between '2023-11-24' and '2023-11-26'
+select * from tbpospayment where loca='19' and sdate between '2023-11-23' and '2023-11-26' and typeid='23'
+
+select * from tb_paymentmode
+
+select * from tbpospaymentsum where loca='19' and cast(sdate as date)='2023-11-26' and zno='39' and typeid='23' order by receipt
+select * from tbpostransactsum where promid='436' and loca='19' and cast(recdate as date)='2023-11-24' order by receipt
+
+select * from tbpostransactsum where itemcode='DISCOUNT' and loca='19' and SDIs='25%' and cast(recdate as date)='2023-11-25'
+
+select * from tbpostransactsum  pt
+inner join tbpospaymentsum pp on pt.receipt=pp.receipt
+where pt.loca='19' and cast(recdate as date)='2023-11-26' and pt.zno='39'
+and pt.itemcode='DISCOUNT' and pp.typeid='23' and pt.loca=pp.loca and pt.zno=pp.zno and pt.SDIs='25%'
+order by PT.receipt
+
+
+UPDATE PT  SET  PT.Promid='436' FROM  tbpospaymentsum  AS  PP  JOIN tbpostransactsum AS PT ON PP.receipt=PT.receipt
+where PT.loca='19' and cast(recdate as date)='2023-11-26' and PT.zno='39'
+and PT.itemcode='DISCOUNT' and PP.typeid='23' and PT.loca=PT.loca and PT.zno=PP.zno and PT.SDIs='25%'
+
+select * from tbpospaymentsum where receipt='00000127' and loca='19' and cast(sdate as date)='2023-11-25' and typeid='23' order by receipt
+select * from tbpostransactsum where receipt='00000127'  and loca='19' and cast(recdate as date)='2023-11-25' order by receipt
+
+
+select * from tbpostransactsum where receipt in('00000043','00000053','00000075','00000106') and loca='19' and zno='37' and itemcode='DISCOUNT'
+update tbpostransactsum set promid=0 where receipt in('00000043','00000053','00000075','00000106') and loca='19' and zno='37' and itemcode='DISCOUNT'

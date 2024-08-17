@@ -1,0 +1,17 @@
+USE [EasyWayNew]
+GO
+
+/****** Object:  View [dbo].[Stock]    Script Date: 10-26-2023 11:27:16 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE VIEW [dbo].[Stock] AS
+select SUM(tb_DwnStock.Qty) as qty,tb_DwnStock.ItemCode,loca from tb_DwnStock group by tb_DwnStock.ItemCode,loca
+
+GO
+
+

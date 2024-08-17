@@ -1,0 +1,35 @@
+select * from tbPostransactSum pt
+join prom46 p on pt.itemcode=p.itemcode
+--and cast(pt.recdate as date)=cast(p.recdate as date)
+and pt.receipt=p.receipt and pt.zno=p.zno and pt.amount=p.amount and pt.RowNo=p.Rowno
+where pt.recdate between '2024-02-06' and '2024-02-12'and 
+pt.loca='46' --and pt.itemcode='DISCOUNT' and pt.Descrip='PROMOTIONAL DISCOUNT'
+and p.promid='55'
+
+begin tran
+update pt set pt.promid='55' from prom46 as p
+join tbPostransactSum as pt on p.itemcode=pt.itemcode
+--and cast(p.recdate as date)=cast(pt.recdate as date)
+and p.receipt=pt.receipt and p.zno=pt.zno and p.amount=pt.amount and p.RowNo=pt.Rowno
+where pt.recdate between '2024-02-06' and '2024-02-12'
+and pt.loca='46' --and pt.itemcode='DISCOUNT' and pt.Descrip='PROMOTIONAL DISCOUNT'
+and p.promid='55'
+
+commit
+
+rollback
+
+
+select * from prom46 where promid='55'
+
+select * from tbPostransactSum where promid='55' and loca='46'
+
+select * from tbPostransactSum 
+where cast(recdate as date)='2023-12-13' 
+and itemcode='DISCOUNT'
+and Descrip ='PROMOTIONAL DISCOUNT' and loca='46'
+
+update tbPostransactSum set promid='38'
+where cast(recdate as date)='2023-12-13' 
+and itemcode='DISCOUNT'
+and Descrip ='PROMOTIONAL DISCOUNT' and loca='46'

@@ -1,0 +1,57 @@
+SELECT ISNULL(Sum(Amount),0) FROM tbPosTransactSum  Where  RecDate Between '2024-02-24' And '2024-02-24'  And (Iid='001' Or Iid='003') And Status=1 And SaleType='S' and unitno='2'
+
+SELECT * FROM tbPosTransactSum  Where  RecDate Between '2024-02-24' And '2024-02-24' 
+ And (Iid='001' Or Iid='003') And Status=1 And SaleType='S' and unitno='2'
+ and amount='5250' and loca='17'
+
+ SELECT * FROM tbPospaymentSum  Where  sdate Between '2024-02-24' And '2024-02-24' 
+ and amount='5250'
+ And (Iid='001' Or Iid='003') And Status=1 And SaleType='S' and unitno='2'
+ and amount='5250'
+
+
+
+ 
+SELECT * FROM tbPosTransact  Where  RecDate Between '2024-02-23' And '2024-02-24' 
+ And (Iid='001' Or Iid='003') And Status=1 And SaleType='S' and unitno='2'
+ and amount='5250' and loca='17'
+
+ SELECT * FROM tbPosTransact  Where  RecDate Between '2024-02-24' And '2024-02-25' 
+ and amount='5250' and loca='17'
+
+ select * from tb_invdet where cast(idate as date)='2024-02-24' and refno='2-1054-00000018'
+
+ select * from tb_payment where cast(invoicedate as date)='2024-02-24' and LocaCode='17' and refno='2-1054-00000045'
+and RefNo='00000018'
+
+
+
+ SELECT * FROM tbPosTransact  Where  RecDate Between '2024-02-24' And '2024-02-25' 
+ and receipt='00000045' and loca='17'
+
+  SELECT * FROM tbpospayment  Where  sdate Between '2024-02-24' And '2024-02-25' 
+ and receipt='00000045' and loca='17'
+ 
+ 
+ SELECT * FROM tbpostransact where cast(recdate as date)='2024-02-24' and receipt='00000045' and idx='120401'
+  
+ SELECT * FROM tbPospayment where cast(sdate as date)='2024-02-24' and receipt='00000045'
+
+ update tbpostransact set upload='F'where cast(recdate as date)='2024-02-24' and receipt='00000045'
+
+ update tbPospayment set upload='F' where cast(sdate as date)='2024-02-24' and receipt='00000045'
+
+ SELECT * FROM tbpostransactsum where cast(recdate as date)='2024-02-24' and receipt='00000045' and Loca='17'
+ SELECT * FROM tbPospaymentSum where cast(sdate as date)='2024-02-24' and receipt='00000045' and Loca='17'
+ select * from tb_invdet where cast(idate as date)='2024-02-24' and refno='2-1054-00000045' and LocaCode='17'
+ select * from tb_InvSumm where cast(idate as date)='2024-02-24' and refno='2-1054-00000045' and LocaCode='17'
+ select * from tb_stock where serialno='P17176359'
+ select * from tb_payment where cast(invoicedate as date)='2024-02-24' and LocaCode='17' and refno='2-1054-00000045'
+
+
+DELETE FROM tbpostransactsum where cast(recdate as date)='2024-02-24' and receipt='00000045' and Loca='17'
+DELETE FROM tbPospaymentSum where cast(sdate as date)='2024-02-24' and receipt='00000045' and Loca='17'
+DELETE from tb_invdet where cast(idate as date)='2024-02-24' and refno='2-1054-00000045' and LocaCode='17'
+DELETE from tb_InvSumm where cast(idate as date)='2024-02-24' and refno='2-1054-00000045' and LocaCode='17'
+DELETE from tb_stock where serialno='P17176359'
+DELETE from tb_payment where cast(invoicedate as date)='2024-02-24' and LocaCode='17' and refno='2-1054-00000045'

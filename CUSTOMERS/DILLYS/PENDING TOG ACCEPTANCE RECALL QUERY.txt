@@ -1,0 +1,1 @@
+ Select SerialNo,RefNo,TDate As Date,UserName,'FROM-' + Rtrim(FromLoca) + ' TO-' + Rtrim(ToLoca) as Location From Tb_TogSumm  Where FromLoca='02' And [Id]='TOG' And Status=1  And SerialNo In (Select SerialNo From tb_TogDet Where FromLoca='02' And [Id]='TOG' And Status=1 And AcQty<Qty)  Order By Idx

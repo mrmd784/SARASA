@@ -1,0 +1,24 @@
+
+select * from tb_PaymentMode
+
+select * from tbPostransact where cast(recdate as date)='2023-10-11' and loca='17' and unitno='2' and Receipt='00000008' and idx in('18618','18619')
+select * from tbpospayment where cast(sdate as date)='2023-10-11' and loca='17' and unitno='2' and Receipt='00000008' and idx='9228'
+
+update tbPostransact set Upload='T'  where cast(recdate as date)='2023-10-11' and loca='17' and unitno='2' and Receipt='00000008' and idx in('18620','18621')
+update tbpospayment set upload='T'  where cast(sdate as date)='2023-10-11' and loca='17' and unitno='2' and Receipt='00000008' and idx='9229'
+
+select * from tbpostransactsum where cast(recdate as date)='2023-10-11' and loca='17' and UnitNo='2' and Receipt='00000008'
+delete from tbpostransactsum where cast(recdate as date)='2023-10-11' and loca='17' and UnitNo='2' and Receipt='00000008'
+
+select * from tbpospaymentsum where cast(sdate as date)='2023-10-11' and loca='17' and UnitNo='2' and Receipt='00000008'
+delete from tbpospaymentsum where cast(sdate as date)='2023-10-11' and loca='17' and UnitNo='2' and Receipt='00000008'
+
+select * from tb_InvDet where IDate='2023-10-11' and ID='inv' and locacode='17' and unitno='2' and refno='2-927-00000008'
+delete from tb_InvDet where IDate='2023-10-11' and ID='inv' and locacode='17' and unitno='2' and refno='2-927-00000008'
+
+select *  from tb_InvSumm where IDate='2023-10-11' and ID='inv' and locacode='17' and unitno='2'  and refno='2-927-00000008'
+delete from tb_InvSumm where IDate='2023-10-11' and ID='inv' and locacode='17' and unitno='2'  and refno='2-927-00000008'
+
+select *  from tb_Stock where PDate='2023-10-11' and ID='inv' and LocaCode='17' and serialno='P17166632'
+delete  from tb_Stock where PDate='2023-10-11' and ID='inv' and LocaCode='17' and serialno='P17166632'
+

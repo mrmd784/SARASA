@@ -1,0 +1,23 @@
+select *from tb_Colour_Size where ItemCode='F00245008A'
+
+
+Select ItemCode, CSCode, CSName, Rate, Price, Qty, Discount, CCode, SCode, '17', Idx from 
+	OpenRowset('Sqloledb','172.22.116.154';'sa';'tstc123',EasyWayNew.Dbo.tb_Colour_Size)WHERE locacode='17'
+	and ItemCode='F00245008A'
+	
+	
+select MAX(LastId) from tb_DownloadIdx where Iid='ITC'
+
+select * from tb_DownloadIdx where Iid='ITC' and LastId='3038806'
+
+update tb_DownloadIdx set LastId='7514493' where Iid='ITC' and LastId='3038806'
+
+select MAX(LastId) from tb_DownloadIdx where Iid='ITC'
+
+
+Select ItemCode, CSCode, CSName, Rate, Price, Qty, Discount, CCode, SCode, '17', Idx from 
+OpenRowset('Sqloledb','172.22.116.154';'sa';'tstc123',EasyWayNew.Dbo.tb_Colour_Size
+)WHERE locacode='17' and Idx>3021880
+and itemcode='F00245008A' Order By Idx
+
+

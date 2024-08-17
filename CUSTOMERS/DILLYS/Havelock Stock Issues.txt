@@ -1,0 +1,62 @@
+alter VIEW [Stock] AS
+select SUM(tb_DwnStock.Qty) as qty,tb_DwnStock.ItemCode,loca from tb_DwnStock group by tb_DwnStock.ItemCode,loca
+
+select Stock.Qty,Stock.ItemCode from Stock 
+join Vw_Stock on  Stock.ItemCode=Vw_Stock.ItemCode 
+and Vw_Stock.LocaCode=Stock.loca and Stock.Qty<>Vw_Stock.Stock  order by Stock.ItemCode 
+
+
+
+select * into StockHavelock from tb_stock where LocaCode='46' and pdate>'2024-02-14'
+
+delete from tb_stock where LocaCode='46' and pdate>'2024-02-14'
+
+select * from StockHavelock
+
+
+select * into stock0214 from tb_stock where LocaCode='46' and pdate='2024-02-14'
+
+delete from tb_stock where LocaCode='46' and pdate='2024-02-14'
+
+
+select * from tb_stock where itemcode='DY922T0237' and locacode='46' 14
+
+select * from tb_stock where itemcode='3' and locacode='46'DY922T0237
+
+select * from tb_stock where itemcode='FO23H33908' and locacode='46' and idx='626072' FO23H33908#MER\L
+
+select * from tb_stock where itemcode='IN623X3663' and locacode='46' DYO22S0272
+
+select * from tb_stock where itemcode='DYO22S0272' and locacode='46'
+
+
+
+update tb_stock set itemcode='DY922T0237',TourCode='DAM240221' where itemcode='3' and locacode='46'
+
+update tb_stock set itemcode='DYO22S0272',TourCode='DAM240221' where itemcode='IN623X3663' and locacode='46'
+
+update tb_stock set CSCode='FO23H33908#MER\L',TourCode='DAM240221',BatchNo='FO23H33908#MER\L'
+ where itemcode='FO23H33908' and locacode='46' and idx='626072'
+
+
+
+DYO22S0272
+
+IN623X3663
+
+
+
+select * from tb_Colour_Size where itemcode='FO23H33908' and LocaCode='46'
+
+select * from tb_stock where cscode not in
+(select CSCode from tb_Colour_Size where itemcode='FO23H33908' and LocaCode='46')and itemcode='FO23H33908' and locacode='46'
+FO23H33908               
+DY922T0237#BKP\06
+
+select * from tb_Colour_Size where CSCode='DYO22S0272#ASH\06'
+
+select * from tb_togdet where serialno='46000050'
+
+DY922T0237
+
+
