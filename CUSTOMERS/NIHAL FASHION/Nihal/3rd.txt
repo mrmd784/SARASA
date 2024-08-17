@@ -1,0 +1,38 @@
+select * from AccThirdPartyDownload
+where AcDate='2023-07-11'
+
+select * from AccGlTransactionDetail
+where DocumentDate='2023-07-11' and Amount=830.00
+
+delete from AccGlTransactionDetail where AccGlTransactionHeaderID between '1440516' and '1440555'
+
+1440516-1440549
+1440550,1440551,1440552,1440553,1440554,1440555
+
+delete from AccGlTransactionHeader
+where  AccGlTransactionHeaderID between '1440516' and '1440555'
+
+
+select * from AccGlTransactionDetail
+where DocumentDate='2023-07-11' and DocumentID='1502' and ReferenceDocumentNo not like 'S%' order by AccGlTransactionHeaderID
+
+select * from AccPaymentheader
+where DocumentDate='2023-07-11' and Amount=1527.50
+
+
+select * from AccPaymentheader
+where DocumentDate='2023-07-11' and DocumentNo not like 'S%' and DocumentID='1503' order by AccPaymentHeaderID
+
+
+160549-160581
+160582,160583,160584,160585,160586,160587
+
+select * from AccPaymentHeader where AccPaymentHeaderID between '160549' and '160587'
+
+select * from AccPaymentDetail
+where  AccPaymentHeaderID between '160549' and '160587'
+
+--paymentheaderid 160821,160555,160822,160556,160823,160557,160824,160558,160825,160559,160826,160560
+--160827,160829,160842,160561,160563,160576,160828,160562,160831,160565,160833,160567,160834,160568,160835,160569,160836
+--160570,160837,160571,160838,160572,160841,160575,160582,160854,160855,160583,160856,160584,160585,160857,160858,160586
+--160859,160587,160843,160549,160844,160550,160845,160551,160846,160552

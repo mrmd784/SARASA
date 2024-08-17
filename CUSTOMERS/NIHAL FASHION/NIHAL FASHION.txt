@@ -1,0 +1,59 @@
+select * from AccThirdPartyDownload order by acdate
+
+delete from AccThirdPartyDownload where AcDate='2023-09-22'
+
+select * from AccGlTransactionheader where DocumentDate='2023-09-22' and amount='10435.00'
+select * from AccGlTransactiondetail where DocumentDate='2023-09-22' and amount='10435.00'
+select * from AccPaymentHeader where DocumentDate='2023-09-22' and DocumentNo='S02033979'
+select * from AccPaymentDetail where AccPaymentHeaderID='169582'
+
+delete from AccGlTransactionheader where DocumentDate='2023-09-22' and amount='10435.00'
+delete from AccGlTransactiondetail where DocumentDate='2023-09-22' and amount='10435.00'
+delete from AccPaymentHeader where DocumentDate='2023-09-22' and DocumentNo='S02033979'
+delete from AccPaymentDetail where AccPaymentHeaderID='169582'
+
+
+select * from AccGlTransactionheader where DocumentDate='2023-09-22' and amount='9730.00'
+select * from AccGlTransactiondetail where DocumentDate='2023-09-22' and amount='9730.00'
+select * from AccPaymentHeader where DocumentDate='2023-09-22' and DocumentNo='S02033980'
+select * from AccPaymentDetail where AccPaymentHeaderID='169583'
+
+delete from AccGlTransactionheader where DocumentDate='2023-09-22' and amount='9730.00'
+delete from AccGlTransactiondetail where DocumentDate='2023-09-22' and amount='9730.00'
+delete from AccPaymentHeader where DocumentDate='2023-09-22' and DocumentNo='S02033980'
+delete from AccPaymentDetail where AccPaymentHeaderID='169583'
+
+select * from AccGlTransactionheader where DocumentDate='2023-09-22' and amount='215.00'
+select * from AccGlTransactiondetail where DocumentDate='2023-09-22' and amount='215.00'
+select * from AccPaymentHeader where DocumentDate='2023-09-22' and DocumentNo='S02024197'
+select * from AccPaymentDetail where AccPaymentHeaderID='169585'
+
+delete from AccGlTransactionheader where DocumentDate='2023-09-22' and amount='215.00'
+delete from AccGlTransactiondetail where DocumentDate='2023-09-22' and amount='215.00'
+delete from AccPaymentHeader where DocumentDate='2023-09-22' and DocumentNo='S02024197'
+delete from AccPaymentDetail where AccPaymentHeaderID='169585'
+
+select * from AccGlTransactionheader where DocumentDate='2023-09-22' and amount='10750.00'
+select * from AccGlTransactiondetail where DocumentDate='2023-09-22' and amount='10750.00'
+select * from AccPaymentHeader where DocumentDate='2023-09-22' and DocumentNo='S02033981'
+select * from AccPaymentDetail where AccPaymentHeaderID='169584'
+
+delete from AccGlTransactionheader where DocumentDate='2023-09-22' and amount='10750.00'
+delete from AccGlTransactiondetail where DocumentDate='2023-09-22' and amount='10750.00'
+delete from AccPaymentHeader where DocumentDate='2023-09-22' and DocumentNo='S02033981'
+delete from AccPaymentDetail where AccPaymentHeaderID='169584'
+
+loca02 unit01
+loca02 unit02
+
+loca01 unit01
+loca01 unit02
+loca01 unit03
+
+loca03 unit01
+
+124.43.13.244
+
+
+
+unit02

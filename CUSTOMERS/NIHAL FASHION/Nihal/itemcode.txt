@@ -1,0 +1,43 @@
+unit 5  8
+2023-06-09
+
+030055001372  50
+030055001409
+030064000538
+030064000539
+
+unit02 ok
+
+
+
+
+
+select td.Productid,pm.productcode,pm.ProductName,4 as LocationID,unitno,isnull(SUM(case td.DocumentID when 1 then td.Qty when 2 then -td.Qty else 0 end),0) AS SumQty
+	,isnull(td.cost,0) GCostPrice,isnull(td.Price,0) as GSellingPrice
+	 ,isnull(max(td.AvgCost),0) as MaxAverageCost
+	 from TransactionDet td 
+	 inner join InvProductMaster pm on td.ProductID=pm.InvProductMasterID
+	  WHERE td.DocumentID in(1,2) AND [Status]=3
+	AND SaleTypeID=1 AND BillTypeID=1 AND TransStatus=3 --and pm.ProductCode='030064000538'
+	AND CAST(td.Zdate AS Date)= '2023-06-09'   
+	AND td.LocationID=4
+	--and unitno=1
+	GROUP BY td.Productid,pm.productcode,pm.ProductName,td.LocationID,unitno,td.cost,td.Price
+
+	  select sum(sumqty) from #z1
+
+	  drop table #z1
+
+
+493327429 unit 01  ok
+unit 02 ok
+721242900 unit 3 ok
+
+510143102 unit 5   not ok 6993 rows 5947 available
+852256645 unit 6 ok
+329633766 unit 7 ok
+951142756 unit 8 ok
+1051992208 unit 10 ok
+680125344 unit 20
+
+

@@ -1,0 +1,64 @@
+select * from StockTake
+select * from TransactionDet where unitno=9 and zno=17 and transstatus=3 and status=3 and cast(zdate as date)='2023-06-09'
+
+select distinct LocationID from TransactionDet where transstatus=3 and status=3 and cast(zdate as date)='2023-06-09'
+
+select * from TransactionDet where unitno=9 and transstatus=3 and status=3 and cast(zdate as date)='2023-06-09'
+
+select * from invproductmaster where InvProductMasterID='23194'
+
+
+
+CREATE TABLE tempStocktake
+(ProductID bigint not null,
+ LocationID bigint not null,
+ CurrentQty decimal(10,2) not null,
+ Qty decimal(10,2) not null,
+ CostPrice  decimal(10,2) not null,
+ SellingPrice decimal(10,2) not null,
+ AverageCost  decimal(10,2) not null
+)
+
+INSERT INTO tempStocktake
+(LocationID,ProductID,CurrentQty,Qty,CostPrice,SellingPrice,AverageCost)
+SELECT  '4',pm.InvProductMasterID,0 as CurrentQty,0 as Qty,
+pm.CostPrice as CostPrice,pm.SellingPrice as SellingPrice,
+pm.AverageCost as AvarageCost 
+from InvProductMaster pm 
+
+select * from tempstocktake
+
+select * from stocktake
+
+update tempStocktake
+set qty=sumQty, 
+SellingPrice=GSellingPrice
+	  FROM (select pm.InvProductMasterID,'4',isnull(SUM(Qty),0) AS SumQty
+	,isnull(max(st.sellingprice),0) as GSellingPrice
+	 from stocktake st
+	 inner join invproductmaster pm on st.ProductCode=pm.productcode  
+	 GROUP BY pm.InvProductMasterID)
+	 Grouped where Grouped.InvProductMasterID= tempStocktake.Productid
+	 and Grouped.InvProductMasterID= tempStocktake.ProductID
+	  
+
+update ts
+set qty=sumQty,
+SellingPrice=GSellingPrice,
+from tempstocktake
+
+select invproductmaster.InvProductMasterID,'4',isnull(SUM(Qty),0) AS SumQty
+	,isnull(max(st.sellingprice),0) as GSellingPrice
+	 from stocktake st
+	 inner join invproductmaster on st.ProductCode=invproductmaster.productcode
+	--where InvProductMasterID='23194'
+	 group by InvProductMasterID
+	 order by InvProductMasterID
+
+
+select ProductCode,'4',isnull(SUM(Qty),0) AS SumQty
+	,isnull(max(st.sellingprice),0) as GSellingPrice
+	 from stocktake st 
+	  where productcode='030018000219'
+	 GROUP BY st.Productcode
+	

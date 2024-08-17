@@ -1,0 +1,22 @@
+Declare @Points As Varchar(20)
+Declare @ReceiptNo As Varchar(20)
+Declare @Amount As Varchar(20)
+Declare @Customer As Varchar(20)
+Declare @Phone As Varchar(20)
+Declare @PBalance As Varchar(20)
+Declare @message As Varchar(255)
+Declare @Date As Varchar(255)
+
+set @Points='1.00'
+set @Phone='0760967718'
+set @ReceiptNo='00000010'
+set @Amount='100.00'
+set @PBalance='10.00'
+set @Date=Convert(Varchar(20),getdate(),121)
+
+Set @message=	'Dear Customer, You Have Earned ' + @Points + ' Point(s) For The Receipt No ' + @ReceiptNo + ' Amounting ' + @Amount + ' On '+ @Date + '. Your Total Pointd Balance is ' + @PBalance + '. Thank you for choosing NILUM FASHION.'
+Insert Into LoyaltyMessage (PhoneNo,MessageText,SendStatus,BatchCode,mask) Values (@Phone,@message,0,'','')
+
+select * from LoyaltyMessage
+
+--select Convert(Varchar(20),getdate(),121)

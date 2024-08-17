@@ -1,0 +1,9 @@
+unit 1  27650
+unit 3  44504
+unit 5  68601
+unit 6  50932
+unit 7  34031
+unit 8  55820
+unit 10 55678
+unit 12 38169
+unit 20 41805

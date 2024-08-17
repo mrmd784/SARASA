@@ -1,0 +1,21 @@
+
+Update 	AccThirdPartyDownload Set SerialNo='S'+SerialNo,AcCode='S'+AcCode Where Rtrim(SerialNo)<>'' And [Did]='S'
+Update 	AccThirdPartyDownload Set RefNo='S'+Ltrim(RefNo) Where Rtrim(RefNo)<>'' And [Did]='S'
+Update 	AccThirdPartyDownload Set [Did]='X' Where [Did]='S'
+
+select * from AccThirdPartyDownload where accode='M012'
+update AccThirdPartyDownload set Did='S'
+
+
+select * from AccThirdPartyDownload where acdate>='2023-07-06' and accode  not in(select suppliercode from supplier)
+
+delete from AccThirdPartyDownload where acdate>='2023-07-06' and accode not in(select suppliercode from supplier)
+
+
+select 'S'+[accode] from AccThirdPartyDownload 
+where acdate>='2023-07-06' and accode 
+not in(select suppliercode from supplier)
+
+update AccThirdPartyDownload set AcCode='S'+[AcCode]
+where acdate>='2023-07-06' and accode 
+not in(select suppliercode from supplier)
