@@ -1,0 +1,38 @@
+select distinct zno,unitno,loca from tbpostransact where cast(recdate as date)='2043-01-03'
+select distinct zno,unitno,loca from tbpostransact where cast(recdate as date)='2085-01-03'
+select * from tbpostransact where loca='05' and unitno='4' and zno='84'
+select * from tbpostransact where cast(recdate as date)='2085-01-03'
+select * from tbpostransact where cast(recdate as date)='2043-01-03'
+
+
+select * from tbPostransactSum where ZNo='84' and loca='05' and unitno='4' and cast(recdate as date)='2085-01-03' 
+select * from tbPospaymentSum where ZNo='84' and loca='05' and unitno='4' and cast(sdate as date)='2085-01-03'   
+select * from tb_InvDet where IDate='2085-01-03' and ID='inv' and locacode='05' and refno like '4-84%'   
+select * from tb_InvSumm where IDate='2085-01-03' and ID='inv' and locacode='05' and refno like '4-84%'  
+select * from tb_Stock where PDate='2085-01-03' and ID='inv' and locacode='05' 
+select * from tb_Payment where InvoiceDate='2085-01-03' and RefNo like '4-84%' and LocaCode='05' 
+
+update tbPostransactSum set recdate=Insertdate  where ZNo='84' and loca='05' and unitno='4' and cast(recdate as date)='2085-01-03'
+update tbPospaymentSum set Sdate=Insertdate  where ZNo='84' and loca='05' and unitno='4' and cast(sdate as date)='2085-01-03'
+update tb_InvDet set IDate=Trdate where IDate='2085-01-03' and ID='inv' and locacode='05' and refno like '4-84%' 
+update tb_InvSumm set IDate=Trdate,DilDate=Trdate where IDate='2085-01-03' and ID='inv' and locacode='05' and refno like '4-84%'
+update  tb_Stock set pdate=crdate where PDate='2085-01-03' and ID='inv' and locacode='05'
+update tb_Payment set InvoiceDate=Tr_Date where InvoiceDate='2085-01-03' and RefNo like '4-84%' and LocaCode='05' 
+
+select * from tbPostransactSum where ZNo='86' and loca='05' and unitno='4' and cast(recdate as date)='2043-01-03' 
+select * from tbPospaymentSum where ZNo='86' and loca='05' and unitno='4' and cast(sdate as date)='2043-01-03'   
+select * from tb_InvDet where IDate='2043-01-03' and ID='inv' and locacode='05' and refno like '4-86%'   
+select * from tb_InvSumm where IDate='2043-01-03' and ID='inv' and locacode='05' and refno like '4-86%'  
+select * from tb_Stock where PDate='2043-01-03' and ID='inv' and locacode='05' 
+select * from tb_Payment where InvoiceDate='2043-01-03' and RefNo like '4-86%' and LocaCode='05' 
+
+
+update tbPostransactSum set recdate=Insertdate  where ZNo='86' and loca='05' and unitno='4' and cast(recdate as date)='2043-01-03'
+update tbPospaymentSum set Sdate=Insertdate  where ZNo='86' and loca='05' and unitno='4' and cast(sdate as date)='2043-01-03'
+update tb_InvDet set IDate=Trdate where IDate='2043-01-03' and ID='inv' and locacode='05' and refno like '4-86%' 
+update tb_InvSumm set IDate=Trdate,DilDate=Trdate where IDate='2043-01-03' and ID='inv' and locacode='05' and refno like '4-86%'
+update  tb_Stock set pdate=crdate where PDate='2043-01-03' and ID='inv' and locacode='05'
+update tb_Payment set InvoiceDate=Tr_Date where InvoiceDate='2043-01-03' and RefNo like '4-86%' and LocaCode='05' 
+
+
+
