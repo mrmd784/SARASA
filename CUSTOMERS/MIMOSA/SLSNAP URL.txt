@@ -1,0 +1,1 @@
+https://app.slsnap.com/custom/webhooks/mimosa_loyalty?auth_key=HBryTZRy2HmuDRfSVx8W8FNwx25&send_to=MyPhoneNo&message=MyMessage
