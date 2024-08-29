@@ -1,0 +1,19 @@
+select * from tb_TogDet where SerialNo='03004872'
+select * from tb_TogSumm where SerialNo='03004872'
+
+select * from tb_TogDet_Acc where RefNo='03004872'
+select * from tb_TogSumm_Acc where RefNo='03004872'
+
+select * from tb_Stock where SerialNo='03004872' and ID='TOG'
+select * from tb_Stock where RefNo='03004872' and ID='TOG'
+
+INSERT INTO [EasyWay].[dbo].[tb_Stock]
+([SerialNo],[LocaCode],[RefNo],[PDate],[SuppCode],[ItemCode],[Scale],[PackSize],[Qty],[Balance]
+,[Rate],[RetPrice],[Cost],[RealCost],[Type],[ID],[CrDate],[Status],[CSCode],[CSName])
+select
+[SerialNo],[LocaCode],[RefNo],[TDate],[SuppCode],[ItemCode],[Scale],[PackSize],-ABS([Qty]),-ABS([Qty])
+,[Rate],[RetValue],[Cost],[Cost],1,[ID],GETDATE(),[Status],[CSCode],[CSName]
+from tb_TogDet_Acc where RefNo='03004872'
+
+select * from tb_Stock where SerialNo like 'A%'
+    
