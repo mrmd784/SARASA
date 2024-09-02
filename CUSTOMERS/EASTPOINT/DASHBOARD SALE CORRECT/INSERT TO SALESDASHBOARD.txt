@@ -1,0 +1,33 @@
+	INSERT INTO [SalesDashboard]([ItemCode],[ItemDescrip],[BarCode],[PackSize],[CSCode],[CSName],[LocaCode],[LocaName],[Qty],[GAmount],[Discount],[Tax],[NetAmount],[DiscountForTot],[CostValue],[Profit],[NoOfReceipt],[IDate],[Cost],[Rate])
+	Select ItemCode,ItemDescrip,BarCode,PackSize,CSCode,CSName,LocaCode,Loca_Name,Qty,GAmount,Discount,Tax,NetAmount,DiscountForTot,CostValue,Profit,NoOfReceipt,IDate,Cost,Rate from 
+	(
+	Select  '00000' ItemCode, '' ItemDescrip,'' BarCode,1 PackSize, '' CSCode,'' CSName,LocaCode,tb_Location.Loca_Name,
+							ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN tb_InvDetDend.Qty WHEN 'MKR' THEN -tb_InvDetDend.Qty ELSE 0 END),0) AS Qty, 
+							ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN tb_InvDetDend.GAmount WHEN 'MKR' THEN -tb_InvDetDend.GAmount ELSE 0 END),0) AS GAmount,
+							ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN tb_InvDetDend.Discount WHEN 'MKR' THEN -tb_InvDetDend.Discount ELSE 0 END),0) AS Discount,
+							ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN tb_InvDetDend.Tax WHEN 'MKR' THEN -tb_InvDetDend.Tax ELSE 0 END),0) AS Tax,
+							ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN tb_InvDetDend.NetAmount WHEN 'MKR' THEN -tb_InvDetDend.NetAmount ELSE 0 END),0) AS NetAmount, 
+							ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN tb_InvDetDend.DiscountForTot WHEN 'MKR' THEN -tb_InvDetDend.DiscountForTot ELSE 0 END),0) AS DiscountForTot,
+							ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN (tb_InvDetDend.Qty*tb_InvDetDend.Cost) WHEN 'MKR' THEN (-tb_InvDetDend.Qty*tb_InvDetDend.Cost) ELSE 0 END),0) AS CostValue,
+							ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN tb_InvDetDend.NetAmount WHEN 'MKR' THEN -tb_InvDetDend.NetAmount ELSE 0 END),0) - ISNULL(SUM(CASE tb_InvDetDend.[Id] WHEN 'INV' THEN (tb_InvDetDend.Qty*tb_InvDetDend.Cost) WHEN 'MKR' THEN (-tb_InvDetDend.Qty*tb_InvDetDend.Cost) ELSE 0 END),0) As Profit,			
+							CAST(IDate as date) IDate,0 Cost,0 Rate  FROM (((tb_InvDetDend INNER JOIN  tb_Item ON tb_InvDetDend.ItemCode = tb_Item.Item_Code)  		
+							INNER JOIN tb_Location ON tb_Location.Loca_Code = tb_InvDetDend.LocaCode)
+							INNER JOIN tb_Customer ON tb_Customer.Cust_Code = tb_InvDetDend.CustCode)	 	
+							WHERE ((tb_InvDetDend.[Id]='INV' OR tb_InvDetDend.[Id]='MKR') AND tb_InvDetDend.Status =1)
+							GROUP BY IDate,LocaCode,tb_Location.Loca_Name 
+														 ) x
+							LEFT OUTER JOIN (
+										SELECT ISNULL(SUM(NoOfReceipt),0) NoOfReceipt,LocationId,DocumentDate FROM
+										(SELECT  ISNULL(COUNT(Receipt),0) NoOfReceipt,LocationID,DocumentDate
+										FROM
+											(
+												SELECT DISTINCT CAST(RecDate as date) DocumentDate,Loca LocationID,Zno,Receipt
+												  From  tbPosTransact Where 
+												  (Iid='001' Or Iid='002' Or Iid='003' Or iid='004') And tbPosTransact.SaleType='S' 
+												   And tbPosTransact.[Status]=1 And (tbPosTransact.Upload='F' Or tbPosTransact.Upload Is Null)
+
+											) AS Temp1
+		    								GROUP BY CAST(DocumentDate as date),LocationID) AS Temp2
+											Group By LocationId,DocumentDate
+											) y
+							ON x.LocaCode = y.LocationID And x.IDate = y.DocumentDate
