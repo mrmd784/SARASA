@@ -1,0 +1,82 @@
+--13 Search Item
+Declare @Description varchar(65)
+Declare @RefCode varchar(65)
+Declare @Pack float
+Declare @Cost money
+Declare @Rate money
+Declare @PRatePrice money
+Declare @EWholePrice money
+Declare @PWholePrice money
+Declare @Ref varchar(20)
+Declare @SupplierCode varchar(20)
+Declare @CategoryCode varchar(20)
+Declare @CategoryName varchar(20)
+Declare @SubCategoryCode varchar(20)
+Declare @SubCategoryName varchar(20)
+Declare @CrDate datetime
+Declare @CostCode varchar(20)
+Declare @UseExp tinyint
+Declare @LocaCode varchar(5)
+
+--SEARCH ITEM
+
+-- tb_search_Item DOWNLOAD
+
+Select @lastid=IsNull(Max(LastId),0) From tb_UploadIdx Where Iid='ITMS' AND LOCA=@LOCATIONID
+Delete From tb_UploadIdx Where Iid='ITMS' And LastId<@lastid AND LOCA=@LOCATIONID
+
+DECLARE curItemSearch CURSOR FOR SELECT [Item_Code],[Description],[RefCode],[BarCode],[Pack],[Cost],[Rate],[PRatePrice],[EWholePrice],[PWholePrice],[Qty],[Ref]
+,[SupplierCode],[CategoryCode],[CategoryName],[SubCategoryCode],[SubCategoryName],[Binno],[Status],[CrDate],[Idx],[CostCode],[UseExp]
+,[LocaCode],[L1_Code],[L1_Name],[L2_Code],[L2_Name],[L3_Code],[L3_Name],[L4_Code],[L4_Name] from 
+EasyWay.Dbo.tb_searchitem WHERE Idx>@lastid Order By Idx
+
+OPEN curItemSearch
+
+FETCH NEXT FROM curItemSearch INTO @Item_Code,@Description,@RefCode,@BarCode,@Pack,@Cost,@Rate,@PRatePrice,@EWholePrice,@PWholePrice,@Qty,@Ref
+,@SupplierCode,@CategoryCode,@CategoryName,@SubCategoryCode,@SubCategoryName,@Binno,@Status,@CrDate,@Idx,@CostCode,@UseExp
+,@LocaCode,@L1_Code,@L1_Name,@L2_Code,@L2_Name,@L3_Code,@L3_Name,@L4_Code,@L4_Name
+
+
+WHILE @@FETCH_STATUS = 0
+BEGIN    	
+	IF (Not Exists(Select Item_Code From EasyWay2.Dbo.tb_searchitem Where Item_Code =@Item_Code))	
+	Begin
+		
+	    Insert Into EasyWay2.Dbo.tb_searchitem ([Item_Code],[Description],[RefCode],[BarCode],[Pack],[Cost],[Rate],[PRatePrice],[EWholePrice],[PWholePrice],[Qty],[Ref]
+		,[SupplierCode],[CategoryCode],[CategoryName],[SubCategoryCode],[SubCategoryName],[Binno],[Status],[CrDate],[CostCode],[UseExp]
+		,[LocaCode],[L1_Code],[L1_Name],[L2_Code],[L2_Name],[L3_Code],[L3_Name],[L4_Code],[L4_Name]) 
+		Values( @Item_Code,@Description,@RefCode,@BarCode,@Pack,@Cost,@Rate,@PRatePrice,@EWholePrice,@PWholePrice,@Qty,@Ref
+		,@SupplierCode,@CategoryCode,@CategoryName,@SubCategoryCode,@SubCategoryName,@Binno,@Status,@CrDate,@CostCode,@UseExp
+		,@LocaCode,@L1_Code,@L1_Name,@L2_Code,@L2_Name,@L3_Code,@L3_Name,@L4_Code,@L4_Name)
+		
+	End
+	Else
+	Begin
+		Update EasyWay2.Dbo.tb_searchitem Set 	
+			[Description]	=@Description
+			,[RefCode] = @RefCode
+			,[Barcode]	=@Barcode
+			,[Cost]	=@Cost
+			,[Rate]=@Rate
+			,[SupplierCode]	=@SupplierCode
+			,[CategoryCode]	=@CategoryCode
+			,[CategoryName] =@CategoryName
+			,[SubCategoryCode] =@SubCategoryCode
+			,[SubCategoryName] =@SubCategoryName
+			,[L1_Code]	=@L1_Code
+			,[L2_Code]	=@L2_Code
+			,[L3_Code]	=@L3_Code
+			,[L4_Code]	=@L4_Code
+			Where Item_Code=@Item_Code
+ 
+	End 
+	Insert Into tb_UploadIdx ([Iid],[lastid],[LOCA]) Values ('ITMS',@Idx,@LOCATIONID)
+
+	FETCH NEXT FROM curItemSearch INTO @Item_Code,@Description,@RefCode,@BarCode,@Pack,@Cost,@Rate,@PRatePrice,@EWholePrice,@PWholePrice,@Qty,@Ref
+		,@SupplierCode,@CategoryCode,@CategoryName,@SubCategoryCode,@SubCategoryName,@Binno,@Status,@CrDate,@Idx,@CostCode,@UseExp
+		,@LocaCode,@L1_Code,@L1_Name,@L2_Code,@L2_Name,@L3_Code,@L3_Name,@L4_Code,@L4_Name
+
+END
+
+CLOSE curItemSearch
+DEALLOCATE curItemSearch
