@@ -1,0 +1,16 @@
+
+INSERT INTO [dbo].[tb_Category]
+([Cat_Code],[Cat_Name],[Cat_Rate],[CDate],[User_Id])
+select
+departmentcode,departmentname,'0.0000',getdate(),'SARASA'
+from 
+ERP.dbo.invDepartment where departmentcode
+not in (select cat_code from tb_category)
+
+INSERT INTO [dbo].tb_subcategory
+([Cat_Code],Subcat_code,Subcat_Name,[CDate],[User_Id],cat_Rate)
+select
+'00',categorycode,categoryname,getdate(),'SARASA','0.00'
+from 
+ERP.dbo.invcategory where categorycode
+not in (select subcat_code from tb_subcategory)
