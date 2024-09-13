@@ -1,0 +1,10 @@
+USE [EasyWay]
+GO
+
+INSERT INTO [dbo].[tb_ItemsBuy]
+([PromId],[ItemCode],[ItemName],[TotalBillValue],[TotalPromItemsValue],[TotalPromItemsQty],[PromItemQty]
+,[Status],[CDate],[CreateBy],[DiscountValue],[ForOtherGoods])
+select
+'100',[Item_Code],Inv_Descrip,'1300.00','0.00','1.0000','0.0000'
+,'1',GETDATE(),'SARASA','0.0000','0'
+from tb_item where Inv_Descrip like '%know%' --and Item_Code<>'HH0965'
