@@ -13,3 +13,31 @@ and DocumentNo='01006077'
 
 select * from AccThirdPartyDownload where AccThirdPartyDownloadID='76751'
 
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+select * from AccGlTransactionHeader where DocumentDate between '2024-05-01' and '2024-06-30'
+and DocumentNo='06001230'
+
+select * from AccGlTransactionDetail 
+where ReferenceTransactionDocumentNo='PD0100000003050'
+and Amount='324747.49'
+
+select * from AccGlTransactionDetail 
+where AccGlTransactionHeaderID='192438'
+
+
+select * from AccPaymentheader 
+where DocumentDate between '2024-05-01' and '2024-06-30'
+and DocumentNo='06001230'
+
+select * from AccPaymentDetail where AccPaymentHeaderID='95988'
+
+update AccPaymentheader set BalanceAmount='0.00'
+where DocumentDate between '2024-05-01' and '2024-06-30'
+and DocumentNo='06001230'
+
+select * from AccPaymentDetail where AccPaymentHeaderID='93300'
+
