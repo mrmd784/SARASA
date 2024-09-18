@@ -1,0 +1,15 @@
+select * from AccThirdPartyDownload  where acdate between '2024-05-01' and '2024-06-30'
+and IdCode in ('PCH','PRN') and AcCode='340'
+
+select * from AccGlTransactionDetail where DocumentDate between '2024-05-01' and '2024-06-30'
+and Remark in('PURCHASE','PURCHASE RETURN') and ReferenceID='340'
+
+select * from AccPaymentDetail
+
+select * from AccPaymentheader where DocumentDate between '2024-05-01' and '2024-06-30'
+and Remark in('PURCHASE','PURCHASE RETURN')
+and DocumentNo='01006077'
+
+
+select * from AccThirdPartyDownload where AccThirdPartyDownloadID='76751'
+
