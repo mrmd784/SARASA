@@ -422,7 +422,7 @@ AS
   FROM dbo.TransactionDet where  CAST(ZDate as date) between '2017-09-01' and '2017-09-30')
 select *
 FROM CTE
-WHERE DuplicateCount > 1
+WHERE LocationID='16' and DuplicateCount > 1
 
 --DELETE
 --FROM CTE
