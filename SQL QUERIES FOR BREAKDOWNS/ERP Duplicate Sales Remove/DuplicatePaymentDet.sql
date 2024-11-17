@@ -42,7 +42,7 @@ WITH CTE ([RowNo]
       ,[NOS]
       ,[CurrencyID]
       ,[CurrencyRate]
-      ,[CreatedOn],DuplicateCount)
+      /*,[CreatedOn]*/,DuplicateCount)
 AS
 (
   SELECT [RowNo]
@@ -89,7 +89,7 @@ AS
       ,[NOS]
       ,[CurrencyID]
       ,[CurrencyRate]
-      ,[CreatedOn],
+      /*,[CreatedOn]*/,
   ROW_NUMBER() OVER(PARTITION BY [RowNo]
       ,[PayTypeID]
       ,[Amount]
@@ -134,7 +134,7 @@ AS
       ,[NOS]
       ,[CurrencyID]
       ,[CurrencyRate]
-      ,[CreatedOn]
+      /*,[CreatedOn]*/
    ORDER BY [RowNo]
       ,[PayTypeID]
       ,[Amount]
@@ -179,12 +179,11 @@ AS
       ,[NOS]
       ,[CurrencyID]
       ,[CurrencyRate]
-      ,[CreatedOn]) AS DuplicateCount
-  FROM dbo.PaymentDet
-)
+      /*,[CreatedOn]*/) AS DuplicateCount
+  FROM dbo.PaymentDet where  CAST(ZDate as date) between '2024-11-16' and '2024-11-16')
 select *
 FROM CTE
-WHERE DuplicateCount > 1
+WHERE LocationID='16' and DuplicateCount > 1
 
 --DELETE
 --FROM CTE
